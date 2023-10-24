@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/won.mp3-f2290528408a1bafbb68711cd755d7d6.mp3str"
+
+[deps]
+
+source_file="res://media/won.mp3"
+dest_files=[ "res://.import/won.mp3-f2290528408a1bafbb68711cd755d7d6.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0
