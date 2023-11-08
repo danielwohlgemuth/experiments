@@ -10,7 +10,6 @@ material = SubResource( 2 )
 script = ExtResource( 4 )
 
 [node name="Title" type="RichTextLabel" parent="."]
-visible = false
 margin_left = 300.0
 margin_top = 40.0
 margin_right = 400.0
@@ -19,10 +18,10 @@ rect_scale = Vector2( 4, 4 )
 text = "Click the box"
 
 [node name="Counter" type="Label" parent="."]
-margin_left = 723.0
-margin_top = 106.0
-margin_right = 820.0
-margin_bottom = 190.0
+margin_left = 786.0
+margin_top = 39.0
+margin_right = 883.0
+margin_bottom = 123.0
 rect_scale = Vector2( 2, 2 )
 
 [node name="won" type="AudioStreamPlayer" parent="."]

@@ -11,6 +11,9 @@ var game_ready = false
 var streak = 1
 var area2d2s = []
 
+var MAX_BLOCKS_WIDE = 6
+var MAX_BLOCKS_HIGH = 4
+
 
 func _ready():
     start_game()
@@ -19,20 +22,31 @@ func _ready():
 func start_game():
     game_ready = false
     rng.randomize()
+    max(streak, MAX_BLOCKS_WIDE * MAX_BLOCKS_HIGH)
     ids = range(streak)
     
     for area2d2 in area2d2s:
         area2d2.queue_free()
     area2d2s = []
     $Counter.text = ""
+    $Title.text = ""
     current_id = 0
     counter = 0
+    
+    var positions = []
+    for x in MAX_BLOCKS_WIDE:
+        for y in MAX_BLOCKS_HIGH:
+            var horizontal_position = 100 + 1000 * x / MAX_BLOCKS_WIDE
+            var vertical_position = 150 + 550 * y / MAX_BLOCKS_HIGH
+            positions.append(Vector2(horizontal_position, vertical_position))
 
     for id in ids:
         var instance = area2d2.instance()
         instance.id = id
         instance.connect("clicked", self, "_on_Clicked")
-        instance.position = Vector2(rng.randi_range(50, 950), rng.randi_range(150, 550))
+        var random_position = rng.randi_range(0, positions.size() - 1)
+        instance.position = positions[random_position] + Vector2(rng.randi_range(-20, 20), rng.randi_range(-20, 20))
+        positions.remove(random_position)
         add_child(instance)
         area2d2s.append(instance)
         
@@ -50,7 +64,7 @@ func _on_Clicked(id):
             $Counter.text = String(counter)
             current_id += 1
             if current_id == ids.size():
-                $Counter.text = "You won!"
+                $Title.text = "You won!"
                 $won.play()
                 emit_signal("hit", id, true, false)
                 streak += 1
@@ -61,7 +75,7 @@ func _on_Clicked(id):
             else:
                 emit_signal("hit", id, true, true)
         else:
-            $Counter.text = "You lost!"
+            $Title.text = "You lost!"
             emit_signal("hit", id, false, true)
             game_ready = false
             

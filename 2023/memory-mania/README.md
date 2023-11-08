@@ -5,7 +5,7 @@ A game where pieces are highlighted in sequence and you try to follow the same s
 ![A GIF of memory mania](media/memory-mania.gif)
 
 ## TODO
-- Avoid overlapping pieces
+- ~~Avoid overlapping pieces~~
 - Tween the colors
 - Make the pieces look round
 - Use an image for the pieces and for each of its state
