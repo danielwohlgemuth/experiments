@@ -12,4 +12,4 @@ A game where pieces are highlighted in sequence and you try to follow the same s
 - Have an easy and hard mode
     - Easy: show the already correctly clicked pieces in green
     - Hard: make correctly clicked pieces go back to the default color
-- Make the font look crisp
+- ~~Make the font look crisp~~

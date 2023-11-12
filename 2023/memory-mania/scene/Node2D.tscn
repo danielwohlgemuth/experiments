@@ -1,9 +1,33 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://media/won.mp3" type="AudioStream" id=3]
 [ext_resource path="res://script/Node2D.gd" type="Script" id=4]
 
 [sub_resource type="CanvasItemMaterial" id=2]
+
+[sub_resource type="DynamicFontData" id=5]
+font_path = "res://media/Roboto-Regular.ttf"
+
+[sub_resource type="DynamicFont" id=3]
+size = 40
+use_filter = true
+font_data = SubResource( 5 )
+
+[sub_resource type="DynamicFontData" id=6]
+font_path = "res://media/Roboto-Light.ttf"
+
+[sub_resource type="DynamicFont" id=4]
+size = 24
+use_filter = true
+font_data = SubResource( 6 )
+
+[sub_resource type="DynamicFontData" id=7]
+font_path = "res://media/Roboto-Light.ttf"
+
+[sub_resource type="DynamicFont" id=8]
+size = 32
+use_filter = true
+font_data = SubResource( 7 )
 
 [node name="Node2D" type="Node2D"]
 material = SubResource( 2 )
@@ -14,28 +38,32 @@ stream = ExtResource( 3 )
 
 [node name="Toplevel" type="Node" parent="."]
 
-[node name="Title" type="RichTextLabel" parent="Toplevel"]
-margin_left = 300.0
-margin_top = 40.0
-margin_right = 400.0
-margin_bottom = 60.0
-rect_scale = Vector2( 4, 4 )
+[node name="Title" type="Label" parent="Toplevel"]
+margin_left = 1.0
+margin_top = 22.0
+margin_right = 1024.0
+margin_bottom = 91.0
+custom_fonts/font = SubResource( 3 )
 text = "Click the box"
+align = 1
 
 [node name="Highscore" type="Label" parent="Toplevel"]
-margin_left = 786.0
-margin_top = 39.0
-margin_right = 883.0
-margin_bottom = 123.0
-rect_scale = Vector2( 2, 2 )
+margin_left = 773.0
+margin_top = 2.0
+margin_right = 1021.0
+margin_bottom = 86.0
+custom_fonts/font = SubResource( 4 )
+text = "Highscore: 0"
+align = 1
+valign = 1
 
 [node name="Button" type="Button" parent="Toplevel"]
 visible = false
-margin_left = 398.0
-margin_top = 316.0
-margin_right = 502.0
-margin_bottom = 354.0
-rect_scale = Vector2( 2, 2 )
+margin_left = 412.0
+margin_top = 278.0
+margin_right = 610.0
+margin_bottom = 353.0
+custom_fonts/font = SubResource( 8 )
 text = "Start"
 
 [connection signal="pressed" from="Toplevel/Button" to="." method="_on_Button_pressed"]
