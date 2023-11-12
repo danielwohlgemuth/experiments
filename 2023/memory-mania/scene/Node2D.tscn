@@ -36,6 +36,6 @@ margin_top = 316.0
 margin_right = 502.0
 margin_bottom = 354.0
 rect_scale = Vector2( 2, 2 )
-text = "Restart"
+text = "Start"
 
 [connection signal="pressed" from="Toplevel/Button" to="." method="_on_Button_pressed"]

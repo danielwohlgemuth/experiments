@@ -72,6 +72,7 @@ func _on_Clicked(id):
                 
                 yield(get_tree().create_timer(1), "timeout")
                 
+                $Toplevel/Button.text = "Continue"
                 $Toplevel/Button.show()
             else:
                 emit_signal("hit", id, true, true)
@@ -82,6 +83,7 @@ func _on_Clicked(id):
             
             yield(get_tree().create_timer(1), "timeout")
             
+            $Toplevel/Button.text = "Retry"
             $Toplevel/Button.show()
 
 
