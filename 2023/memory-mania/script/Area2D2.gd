@@ -2,56 +2,49 @@ extends Area2D
 
 
 var id = 0
-var red = Color(1, 0, 0)
-var green = Color(0, 1, 0)
-var blue = Color(0, 0, 1)
-var light_blue = Color(0.4, 0.4, 1)
+var active = true
 
 signal clicked(id)
 
 
 func _ready():
-    $CollisionShape2D/Box.set_texture(unicolor_gradient(blue))
+    $CollisionShape2D/AnimatedSprite.play("default")
 
-    var enemynode = get_tree().get_root().find_node("Node2D",true,false)
+    var enemynode = get_tree().get_root().find_node("Node2D", true, false)
     enemynode.connect("hit", self, "_on_Hit")
 
 
-func _on_Area2D2_input_event(viewport, event, shape_idx):
-    var color = light_blue
+func _on_Area2D2_input_event(_viewport, event, _shape_idx):
+    if (!active):
+        return
+
     if event is InputEventMouseButton:
         if event.button_index == BUTTON_LEFT and event.pressed:
-            color = blue
             emit_signal("clicked", id)
-
-    $CollisionShape2D/Box.set_texture(unicolor_gradient(color))
+    else:        
+        $CollisionShape2D/AnimatedSprite.play( "focused")
 
 
 func _on_Area2D2_mouse_exited():
-    $CollisionShape2D/Box.set_texture(unicolor_gradient(blue))
+    if (!active):
+        return
+
+    $CollisionShape2D/AnimatedSprite.play("default")
 
 
-func unicolor_gradient(color):
-    var gradient = Gradient.new()
-    gradient.colors = PoolColorArray([color])
-    var gradient2d = GradientTexture2D.new()
-    gradient2d.gradient = gradient
-    return gradient2d
-
-
-func _on_Hit(id, result, sound):
+func _on_Hit(id, result, play_sound):
     if (id == self.id):
-        var color
+        active = false
         if (result):
-            color = green
-            if (sound):
+            $CollisionShape2D/AnimatedSprite.play("correct")
+            if (play_sound):
                 $hit.play()
         else:
-            color = red
-            if (sound):
+            $CollisionShape2D/AnimatedSprite.play("wrong")
+            if (play_sound):
                 $missed.play()
-            
-        $CollisionShape2D/Box.set_texture(unicolor_gradient(color))
-        yield(get_tree().create_timer(1), "timeout")
-        $CollisionShape2D/Box.set_texture(unicolor_gradient(blue))
-        
+
+        if ($CollisionShape2D/AnimatedSprite.animation == "correct"):
+            yield(get_tree().create_timer(1), "timeout")
+            active = true
+            $CollisionShape2D/AnimatedSprite.play("default")
