@@ -2,13 +2,13 @@ extends Node2D
 
 signal hit(id, result, sound)
 
-var area2d2 = preload("res://scene/Area2D2.tscn")
+var Area2D2 = preload("res://scene/Area2D2.tscn")
 var rng = RandomNumberGenerator.new()
 var counter = 0
 var ids
 var current_id = 0
 var game_ready = false
-var streak = 1
+var highscore = 0
 var area2d2s = []
 
 var MAX_BLOCKS_WIDE = 6
@@ -22,14 +22,14 @@ func _ready():
 func start_game():
     game_ready = false
     rng.randomize()
-    max(streak, MAX_BLOCKS_WIDE * MAX_BLOCKS_HIGH)
-    ids = range(streak)
+    highscore = min(highscore, MAX_BLOCKS_WIDE * MAX_BLOCKS_HIGH)
+    ids = range(highscore + 1)
     
     for area2d2 in area2d2s:
         area2d2.queue_free()
     area2d2s = []
-    $Counter.text = ""
-    $Title.text = ""
+    $Toplevel/Highscore.text = "Highscore: " + String(highscore)
+    $Toplevel/Title.text = ""
     current_id = 0
     counter = 0
     
@@ -41,8 +41,9 @@ func start_game():
             positions.append(Vector2(horizontal_position, vertical_position))
 
     for id in ids:
-        var instance = area2d2.instance()
+        var instance = Area2D2.instance()
         instance.id = id
+        instance.set("z", 10)
         instance.connect("clicked", self, "_on_Clicked")
         var random_position = rng.randi_range(0, positions.size() - 1)
         instance.position = positions[random_position] + Vector2(rng.randi_range(-20, 20), rng.randi_range(-20, 20))
@@ -61,29 +62,29 @@ func _on_Clicked(id):
     if game_ready and current_id in ids:
         if ids[current_id] == id:
             counter += 1
-            $Counter.text = String(counter)
             current_id += 1
             if current_id == ids.size():
-                $Title.text = "You won!"
+                $Toplevel/Title.text = "You won!"
                 $won.play()
                 emit_signal("hit", id, true, false)
-                streak += 1
+                highscore += 1
+                $Toplevel/Highscore.text = "Highscore: " + String(highscore)
                 
                 yield(get_tree().create_timer(1), "timeout")
                 
-                $Button.show()
+                $Toplevel/Button.show()
             else:
                 emit_signal("hit", id, true, true)
         else:
-            $Title.text = "You lost!"
+            $Toplevel/Title.text = "You lost!"
             emit_signal("hit", id, false, true)
             game_ready = false
             
             yield(get_tree().create_timer(1), "timeout")
             
-            $Button.show()
+            $Toplevel/Button.show()
 
 
 func _on_Button_pressed():
-    $Button.hide()
+    $Toplevel/Button.hide()
     start_game()

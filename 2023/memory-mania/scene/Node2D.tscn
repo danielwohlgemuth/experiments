@@ -9,7 +9,12 @@
 material = SubResource( 2 )
 script = ExtResource( 4 )
 
-[node name="Title" type="RichTextLabel" parent="."]
+[node name="won" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+
+[node name="Toplevel" type="Node" parent="."]
+
+[node name="Title" type="RichTextLabel" parent="Toplevel"]
 margin_left = 300.0
 margin_top = 40.0
 margin_right = 400.0
@@ -17,17 +22,14 @@ margin_bottom = 60.0
 rect_scale = Vector2( 4, 4 )
 text = "Click the box"
 
-[node name="Counter" type="Label" parent="."]
+[node name="Highscore" type="Label" parent="Toplevel"]
 margin_left = 786.0
 margin_top = 39.0
 margin_right = 883.0
 margin_bottom = 123.0
 rect_scale = Vector2( 2, 2 )
 
-[node name="won" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
-
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="Toplevel"]
 visible = false
 margin_left = 398.0
 margin_top = 316.0
@@ -36,4 +38,4 @@ margin_bottom = 354.0
 rect_scale = Vector2( 2, 2 )
 text = "Restart"
 
-[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="Toplevel/Button" to="." method="_on_Button_pressed"]
