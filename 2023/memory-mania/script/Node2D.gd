@@ -11,18 +11,20 @@ var game_ready = false
 var highscore = 0
 var area2d2s = []
 
-var MAX_BLOCKS_WIDE = 6
+var MAX_BLOCKS_WIDE = 8
 var MAX_BLOCKS_HIGH = 4
 
+var POSITION_VARIANCE = 20
 
 func _ready():
     start_game()
 
 
 func start_game():
+    $Toplevel/Button.hide()
     game_ready = false
     rng.randomize()
-    highscore = min(highscore, MAX_BLOCKS_WIDE * MAX_BLOCKS_HIGH)
+    highscore = min(highscore, MAX_BLOCKS_WIDE * MAX_BLOCKS_HIGH - 1)
     ids = range(highscore + 1)
     
     for area2d2 in area2d2s:
@@ -34,21 +36,24 @@ func start_game():
     counter = 0
     
     var positions = []
+    var top_left_x = $Container.rect_position.x
+    var top_left_y = $Container.rect_position.y
+    var width = $Container.rect_size.x
+    var heigth = $Container.rect_size.y
     for x in MAX_BLOCKS_WIDE:
         for y in MAX_BLOCKS_HIGH:
-            var horizontal_position = 100 + 1000 * x / MAX_BLOCKS_WIDE
-            var vertical_position = 150 + 550 * y / MAX_BLOCKS_HIGH
+            var horizontal_position = top_left_x + width * x / (MAX_BLOCKS_WIDE - 1)
+            var vertical_position = top_left_y + heigth * y / (MAX_BLOCKS_HIGH - 1)
             positions.append(Vector2(horizontal_position, vertical_position))
 
     for id in ids:
         var instance = Area2D2.instance()
         instance.id = id
-        instance.set("z", 10)
         instance.connect("clicked", self, "_on_Clicked")
         var random_position = rng.randi_range(0, positions.size() - 1)
-        instance.position = positions[random_position] + Vector2(rng.randi_range(-20, 20), rng.randi_range(-20, 20))
+        instance.position = positions[random_position] + Vector2(rng.randi_range(-POSITION_VARIANCE, POSITION_VARIANCE), rng.randi_range(-POSITION_VARIANCE, POSITION_VARIANCE))
         positions.remove(random_position)
-        add_child(instance)
+        $Container/Node.add_child(instance)
         area2d2s.append(instance)
         
     for area2d2 in area2d2s:
@@ -88,5 +93,4 @@ func _on_Clicked(id):
 
 
 func _on_Button_pressed():
-    $Toplevel/Button.hide()
     start_game()

@@ -36,6 +36,15 @@ script = ExtResource( 4 )
 [node name="won" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
 
+[node name="Container" type="Control" parent="."]
+visible = false
+margin_left = 95.0
+margin_top = 151.0
+margin_right = 934.0
+margin_bottom = 515.0
+
+[node name="Node" type="Node" parent="Container"]
+
 [node name="Toplevel" type="Node" parent="."]
 
 [node name="Title" type="Label" parent="Toplevel"]
@@ -58,7 +67,6 @@ align = 1
 valign = 1
 
 [node name="Button" type="Button" parent="Toplevel"]
-visible = false
 margin_left = 412.0
 margin_top = 278.0
 margin_right = 610.0
