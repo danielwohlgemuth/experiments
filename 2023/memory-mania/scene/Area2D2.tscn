@@ -63,9 +63,11 @@ frames = SubResource( 6 )
 
 [node name="hit" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 4 )
+volume_db = -30.0
 
 [node name="missed" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 3 )
+volume_db = -20.0
 
 [connection signal="input_event" from="." to="." method="_on_Area2D2_input_event"]
 [connection signal="mouse_exited" from="." to="." method="_on_Area2D2_mouse_exited"]
