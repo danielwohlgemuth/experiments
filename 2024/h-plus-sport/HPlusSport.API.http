@@ -1,0 +1,6 @@
+@HPlusSport.API_HostAddress = http://localhost:5049
+
+GET {{HPlusSport.API_HostAddress}}/api/Products/
+Accept: application/json
+
+###
