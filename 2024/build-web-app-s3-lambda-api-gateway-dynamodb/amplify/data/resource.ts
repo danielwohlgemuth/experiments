@@ -5,6 +5,7 @@ const schema = a
   .schema({
     UserProfile: a
       .model({
+        name: a.string(),
         email: a.string(),
         profileOwner: a.string(),
       })
