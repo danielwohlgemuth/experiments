@@ -66,6 +66,10 @@ export class CiCdUsingCodepipelineCodebuildAndCodedeployStack extends cdk.Stack 
       Peer.anyIpv4(),
       Port.HTTP,
     );
+    webSg.addIngressRule(
+      Peer.prefixList('pl-03915406641cb1f53'), // Prefix Id for com.amazonaws.us-east-2.ec2-instance-connect
+      Port.SSH,
+    );
     
     // EC2 Instance
     // This is the Python Web server that we will be using
