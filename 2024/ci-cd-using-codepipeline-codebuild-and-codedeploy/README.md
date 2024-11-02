@@ -1,5 +1,11 @@
 # Welcome to your CDK TypeScript project
 
+AWS Architecture
+
+![AWS Architecture](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/assets/ci-cd-pipeline.png)
+
+[AWS Architecture diagram file](https://app.diagrams.net/?title=ci-cd-pipeline#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2024%2Fci-cd-using-codepipeline-codebuild-and-codedeploy%2Fassets%2Fci-cd-pipeline.drawio)
+
 This is a blank project for CDK development with TypeScript.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
