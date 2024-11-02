@@ -5,16 +5,35 @@ import { Vpc, SubnetType, Peer, Port, AmazonLinuxGeneration,
   AmazonLinuxCpuType, Instance, SecurityGroup, AmazonLinuxImage,
   InstanceClass, InstanceSize, InstanceType
 } from 'aws-cdk-lib/aws-ec2';
-import { Role, ServicePrincipal, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, ManagedPolicy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline';
 import { GitHubSourceAction, CodeBuildAction, CodeDeployServerDeployAction } from 'aws-cdk-lib/aws-codepipeline-actions';
 import { PipelineProject, LinuxBuildImage } from 'aws-cdk-lib/aws-codebuild';
 import { ServerDeploymentGroup, ServerApplication, InstanceTagSet } from 'aws-cdk-lib/aws-codedeploy';
-import { SecretValue } from 'aws-cdk-lib';
+import { RemovalPolicy, SecretValue } from 'aws-cdk-lib';
+import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
 
 export class CiCdUsingCodepipelineCodebuildAndCodedeployStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const dynamoTable = new Table(this, 'dynamodb', {
+      partitionKey: {
+        name: 'email',
+        type: AttributeType.STRING
+      },
+      tableName: 'new_startup_signups',
+      readCapacity: 5,
+      writeCapacity: 5,
+
+      /**
+       *  The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
+       * the new table, and it will remain in your account until manually deleted. By setting the policy to
+       * DESTROY, cdk destroy will delete the table (even if it has data in it)
+       */
+      removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // IAM
     // Policy for CodeDeploy bucket access
     // Role that will be attached to the EC2 instance so it can be 
@@ -30,6 +49,16 @@ export class CiCdUsingCodepipelineCodebuildAndCodedeployStack extends cdk.Stack 
     
     webServerRole.addManagedPolicy(
       ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonEC2RoleforAWSCodeDeploy'),
+    );
+
+    webServerRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [dynamoTable.tableArn], 
+        actions: [
+          "dynamodb:PutItem",
+        ]
+      })
     );
 
     // VPC
