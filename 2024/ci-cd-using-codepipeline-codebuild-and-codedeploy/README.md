@@ -29,6 +29,8 @@ aws secretsmanager create-secret \
 
 This assumes that repo is `sample-python-web-app` and the owner is `danielwohlgemuth`. If that's not the case, update the values in the GitHubSourceAction configuration in [ci-cd-using-codepipeline-codebuild-and-codedeploy-stack.ts](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/lib/ci-cd-using-codepipeline-codebuild-and-codedeploy-stack.ts).
 
+If you plan to use EC2 Instance Connect to log in to the server and deploy this project in a region other then `us-east-2`, please update the prefix list Id. You can find the prefix list Id in the `VPC` service under the `Managed prefix lists` section.
+
 Initialize the CDK toolkit stack in AWS
 
 ```bash
