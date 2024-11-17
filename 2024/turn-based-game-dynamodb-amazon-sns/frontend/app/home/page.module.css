@@ -1,0 +1,5 @@
+.limited p, .limited span {
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

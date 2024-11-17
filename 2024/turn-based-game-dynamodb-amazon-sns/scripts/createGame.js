@@ -7,12 +7,12 @@ const params = {
   TableName: 'turn-based-game',
   Item: {
     gameId: '5b5ee7d8',
-    user1: 'myfirstuser',
-    user2: 'theseconduser',
+    user1: 'first.user@example.com.invalid',
+    user2: 'second.user@example.com.invalid',
     heap1: 5,
     heap2: 4,
     heap3: 5,
-    lastMoveBy: 'myfirstuser'
+    lastMoveBy: 'first.user@example.com.invalid'
   }
 }
 

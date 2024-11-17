@@ -13,9 +13,8 @@ const client = jwksClient({
 
 const createCognitoUser = async (username, password, email, phoneNumber) => {
   const signUpParams = {
-    ClientId: process.env.COGNITO_CLIENT_ID,
+    UserPoolId: process.env.USER_POOL_ID,
     Username: username,
-    Password: password,
     UserAttributes: [
       {
         Name: "email",
@@ -25,14 +24,17 @@ const createCognitoUser = async (username, password, email, phoneNumber) => {
         Name: "phone_number",
         Value: phoneNumber
       }
-    ]
+    ],
+    MessageAction: 'SUPPRESS',
   };
-  await cognitoidentityserviceprovider.signUp(signUpParams).promise();
-  const confirmParams = {
+  await cognitoidentityserviceprovider.adminCreateUser(signUpParams).promise();
+  const passwordParams = {
     UserPoolId: process.env.USER_POOL_ID,
-    Username: username
+    Username: username,
+    Password: password,
+    Permanent: true,
   };
-  await cognitoidentityserviceprovider.adminConfirmSignUp(confirmParams).promise();
+  await cognitoidentityserviceprovider.adminSetUserPassword(passwordParams).promise();
   return {
     username,
     email,

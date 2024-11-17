@@ -28,4 +28,4 @@ const performMove = async ({ gameId, user, changedHeap, changedHeapValue }) => {
   }
 }
 
-performMove({ gameId: '5b5ee7d8', user: 'theseconduser', changedHeap: 'heap1', changedHeapValue: 3 })
+performMove({ gameId: '5b5ee7d8', user: 'second.user@example.com.invalid', changedHeap: 'heap1', changedHeapValue: 3 })

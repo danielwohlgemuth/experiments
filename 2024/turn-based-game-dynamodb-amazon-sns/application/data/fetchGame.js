@@ -4,18 +4,18 @@ const AWS = require("aws-sdk");
 const documentClient = new AWS.DynamoDB.DocumentClient();
 
 const fetchGame = async gameId => {
-  const params = {
-    TableName: "turn-based-game",
-    Key: {
-      gameId: gameId
-    }
-  };
-
   try {
+    const params = {
+      TableName: "turn-based-game",
+      Key: {
+        gameId: gameId
+      }
+    };
+
     const game = await documentClient.get(params).promise();
-    return game.Item;
+    return { game: game.Item };
   } catch (error) {
-    console.log("Error fetching game: ", error.message);
+    console.error("Error fetching game: ", error);
     throw new Error("Could not fetch game");
   }
 };

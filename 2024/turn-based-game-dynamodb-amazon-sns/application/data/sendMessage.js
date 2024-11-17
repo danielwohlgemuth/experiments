@@ -9,7 +9,10 @@ const sendMessage = async ({ phoneNumber, message }) => {
     PhoneNumber: phoneNumber
   };
 
-  return sns.publish(params).promise();
+  if (process.env.SEND_SMS === '1') {
+    return sns.publish(params).promise();
+  }
+  return Promise.resolve(undefined);
 };
 
 module.exports = sendMessage;

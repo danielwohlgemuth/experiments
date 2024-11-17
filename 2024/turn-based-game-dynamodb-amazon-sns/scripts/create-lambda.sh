@@ -62,7 +62,7 @@ sleep 10
 echo "Creating Lambda function"
 FUNCTION_ARN=$(aws lambda create-function \
   --function-name turn-based-api \
-  --runtime nodejs10.x \
+  --runtime nodejs20.x \
   --role ${ROLE_ARN} \
   --handler application/handler.handler \
   --timeout 12 \
