@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { Box, Button, CircularProgress, Grid2, Tab, Tabs, TextField, Typography } from "@mui/material";
-import { useRouter } from 'next/navigation'
-import { useState } from "react";
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from "react";
 import { createUser, login } from "./service";
 import { CreateUserRequest, LoginRequest } from "./data";
 import { store, setIdToken, setCurrentUser } from "./store";
@@ -11,6 +11,7 @@ import { store, setIdToken, setCurrentUser } from "./store";
 
 export default function Page() {
   const router = useRouter();
+  const pathname = usePathname();
   const [tabValue, setTabValue] = useState('sign-in');
   const [info, setInfo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +80,12 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    if (pathname !== '/' && !store.getState().idToken) {
+      router.push('/');
+      router.refresh();
+    }
+  }, [router, pathname]);
 
   return (
     <>

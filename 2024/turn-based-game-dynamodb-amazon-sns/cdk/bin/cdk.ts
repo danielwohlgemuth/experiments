@@ -1,21 +1,47 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
-import { CdkStack } from '../lib/cdk-stack';
+import "source-map-support/register";
+import * as cdk from "aws-cdk-lib";
+import { CloudFrontStack } from "../lib/cloudfront-stack";
+import { RestApiStack } from "../lib/rest-api-stack";
+import { CognitoStack } from "../lib/cognito-stack";
+import { DynamoDBStack } from "../lib/dynamodb-stack";
+import { BucketDeploymentStack } from "../lib/bucket-deployment-stack";
+import {
+  CloudFormationClient,
+  DescribeStacksCommand,
+} from "@aws-sdk/client-cloudformation";
+
+const fetchApiUrl = async () => {
+  const client = new CloudFormationClient();
+  const command = new DescribeStacksCommand({ StackName: "RestApiStack" });
+  const response = await client.send(command);
+
+  if (!response.Stacks) {
+    throw new Error("Stack not found");
+  }
+
+  return response.Stacks[0].Outputs?.find(
+    (output) => output.ExportName === "apiURL",
+  )?.OutputValue;
+};
 
 const app = new cdk.App();
-new CdkStack(app, 'TurnBasedGame', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+new DynamoDBStack(app, "DynamoDBStack");
+const cognitoStack = new CognitoStack(app, "CognitoStack");
+const restApiStack = new RestApiStack(app, "RestApiStack", cognitoStack);
+restApiStack.addDependency(cognitoStack);
+const cloudfrontStack = new CloudFrontStack(app, "CloudFrontStack");
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+createBucketDeploymentStack();
+async function createBucketDeploymentStack() {
+  const apiUrl = (await fetchApiUrl()) || "";
+  const bucketDeploymentStack = new BucketDeploymentStack(
+    app,
+    "BucketDeploymentStack",
+    cloudfrontStack,
+    apiUrl,
+  );
+  bucketDeploymentStack.addDependency(cloudfrontStack);
+  bucketDeploymentStack.addDependency(restApiStack);
+}

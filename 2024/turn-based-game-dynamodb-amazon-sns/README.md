@@ -72,13 +72,15 @@ cd cdk
 Deploy resources
 
 ```bash
-cdk deploy
+cdk deploy DynamoDBStack CognitoStack RestApiStack CloudFrontStack
+aws cloudformation wait stack-create-complete --stack-name DynamoDBStack --stack-name CognitoStack --stack-name RestApiStack --stack-name CloudFrontStack
+cdk deploy BucketDeploymentStack
 ```
 
 Delete resources
 
 ```bash
-cdk destroy
+cdk destroy --all
 ```
 
 ## Interface
