@@ -1,23 +1,18 @@
-# Welcome to your CDK TypeScript project
+# CI/CD using CodePipeline, CodeBuild, and CodeDeploy
 
 AWS Architecture
 
-![AWS Architecture](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/assets/ci-cd-pipeline.png)
+![AWS Architecture](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/assets/ci-cd-pipeline.drawio.png)
 
 [AWS Architecture diagram file](https://app.diagrams.net/?title=ci-cd-pipeline#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2024%2Fci-cd-using-codepipeline-codebuild-and-codedeploy%2Fassets%2Fci-cd-pipeline.drawio)
 
-This is a blank project for CDK development with TypeScript.
+Code Coverage Summary
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+![codebuild report](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/assets/codebuild-report.png)
 
-## Useful commands
+## Cost
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+This project uses [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) to store the GitHub access token, which has a cost of **$0.40 per secret per month**. For secrets that are stored for less than a month, the price is prorated based on the number of hours, so make sure to delete the secret as soon as you are done with the project.
 
 ## Setup Dev Environment
 
@@ -26,11 +21,11 @@ In GitHub, create a personal access tokens (classic), selecting the `repo` and `
 Run the following command, replacing `GITHUB_ACCESS_TOKEN` with the secret from the previous step and `REGION` with the appropriate AWS region the project will run in.
 
 ```bash
-aws secretsmanager create-secret \ 
-  --name github-oauth-token \ 
-  --description "Github access token for cdk" \ 
-  --secret-string GITHUB_ACCESS_TOKEN \ 
-  --region REGION
+aws secretsmanager create-secret \
+  --name "github-oauth-token" \
+  --description "Github access token for CI/CD" \
+  --secret-string "GITHUB_ACCESS_TOKEN" \
+  --region "REGION"
 ```
 
 This assumes that repo is `sample-python-web-app` and the owner is `danielwohlgemuth`. If that's not the case, update the values in the GitHubSourceAction configuration in [ci-cd-using-codepipeline-codebuild-and-codedeploy-stack.ts](/2024/ci-cd-using-codepipeline-codebuild-and-codedeploy/lib/ci-cd-using-codepipeline-codebuild-and-codedeploy-stack.ts).
@@ -43,7 +38,7 @@ Initialize the CDK toolkit stack in AWS
 cdk bootstrap
 ````
 
-Deploy the stack into AWS
+Deploy the stack to AWS
 
 ```bash
 cdk deploy
@@ -53,4 +48,12 @@ Delete the stack from AWS
 
 ```bash
 cdk destroy
+```
+
+Delete the secret
+
+```bash
+aws secretsmanager delete-secret \
+    --secret-id github-oauth-token \
+    --recovery-window-in-days 7
 ```

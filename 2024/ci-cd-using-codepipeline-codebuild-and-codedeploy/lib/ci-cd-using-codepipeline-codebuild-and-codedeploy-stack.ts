@@ -8,7 +8,7 @@ import { Vpc, SubnetType, Peer, Port, AmazonLinuxGeneration,
 import { Role, ServicePrincipal, ManagedPolicy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline';
 import { GitHubSourceAction, CodeBuildAction, CodeDeployServerDeployAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { PipelineProject, LinuxBuildImage } from 'aws-cdk-lib/aws-codebuild';
+import { PipelineProject, LinuxBuildImage, ReportGroup, ReportGroupType } from 'aws-cdk-lib/aws-codebuild';
 import { ServerDeploymentGroup, ServerApplication, InstanceTagSet } from 'aws-cdk-lib/aws-codedeploy';
 import { RemovalPolicy, SecretValue } from 'aws-cdk-lib';
 import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
@@ -150,6 +150,13 @@ export class CiCdUsingCodepipelineCodebuildAndCodedeployStack extends cdk.Stack 
       stageName: 'Deploy',
     });
 
+    new ReportGroup(this, 'ReportGroup', {
+      reportGroupName: 'sample-python-web-app-python-reports',
+      type: ReportGroupType.CODE_COVERAGE,
+      removalPolicy: RemovalPolicy.DESTROY,
+      deleteReports: true,
+    });
+
     // Source action
     const sourceOutput = new Artifact();
     const githubSourceAction = new GitHubSourceAction({
@@ -165,6 +172,7 @@ export class CiCdUsingCodepipelineCodebuildAndCodedeployStack extends cdk.Stack 
 
     // Build Action
     const pythonTestProject = new PipelineProject(this, 'pythonTestProject', {
+      projectName: 'sample-python-web-app',
       environment: {
         buildImage: LinuxBuildImage.AMAZON_LINUX_2_5,
       },
