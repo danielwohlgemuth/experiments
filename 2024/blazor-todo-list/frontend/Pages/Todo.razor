@@ -1,0 +1,51 @@
+﻿@page "/todo"
+
+<h3>Todo (@todos.Count(todo => !todo.IsDone))</h3>
+
+@foreach (var todo in todos)
+{
+    <div class="input-group mb-2">
+        <span class="input-group-text">
+            <input type="checkbox" @bind="todo.IsDone" class="form-check-input" />
+        </span>
+        <input @bind="todo.Title" class="form-control @(todo.IsDone ? "text-done" : "")" />
+        <button @onclick="() => RemoveTodo(todo.Id)" class="btn btn-secondary">
+            <span class="bi bi-x-remove" aria-hidden="true"></span>
+        </button>
+    </div>
+}
+
+<div class="input-group mt-4">
+    <input @bind="newTodo" @bind:event="oninput" @onkeydown="AddTodoOnEnter" class="form-control" />
+    <button @onclick="AddTodo" class="btn btn-secondary">Add todo</button>
+</div>
+
+@code {
+    private int currentId = 1;
+    private List<TodoItem> todos = new();
+    string newTodo = "";
+
+    void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Id = currentId, Title = newTodo });
+            currentId++;
+            newTodo = string.Empty;
+        }
+    }
+
+    void AddTodoOnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") {
+            AddTodo();
+        }
+    }
+
+    void RemoveTodo(int Id) {
+        TodoItem? todo = todos.Find(todo => todo.Id == Id);
+        if (todo != null) {
+            todos.Remove(todo);
+        }
+    }
+}
