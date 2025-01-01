@@ -74,7 +74,6 @@ namespace Cdk
                     { "post_build", new Dictionary<string, object> {
                         { "on-failure", "ABORT" },
                         { "commands", new[] {
-                            "pwd",
                             $"aws s3 cp output/wwwroot/ s3://{bucket.BucketName}/ --recursive",
                         } },
                     }},
@@ -97,10 +96,13 @@ namespace Cdk
                 {
                     "codeconnections:GetConnection",
                     "codeconnections:GetConnectionToken",
+                    "s3:PutObject",
                 },
                 Resources = new[]
                 {
                     "arn:aws:codeconnections:*:*:connection/*",
+                    $"arn:aws:s3:::{bucket.BucketName}",
+                    $"arn:aws:s3:::{bucket.BucketName}/*",
                 },
             });
             project.AddToRolePolicy(policyStatement);
