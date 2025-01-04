@@ -1,5 +1,7 @@
 # Blazor To-Do List
 
+See the review of this project on YouTube at https://youtu.be/dV0mG7iBjkY.
+
 ![Blazor To-Do List](/2024/blazor-todo-list/assets/blazor-todo-list.png)
 
 This project uses Blazor, a frontend web framework similar in functionality to React and other modern frameworks, but where you can write the code using C#/.NET instead of JavaScript. It's based on [Build a to-do list with Blazor](https://learn.microsoft.com/en-us/training/modules/build-blazor-todo-list/) with some UI adjustments and also includes infrastructure code to deploy it on AWS.
