@@ -137,7 +137,7 @@ namespace Cdk
                 ProjectName = "blazor-todo-list",
                 // Leave the line saying `Source = gitHubSource,` commented when deploying the CDK stack for the first time.
                 // Uncomment and redeploy it after the first deployment was successful.
-                Source = gitHubSource,
+                // Source = gitHubSource,
                 BuildSpec = buildSpec,
                 Role = role,
             });
