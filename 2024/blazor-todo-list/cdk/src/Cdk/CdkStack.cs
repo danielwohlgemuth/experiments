@@ -13,6 +13,25 @@ namespace Cdk
     {
         internal CdkStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
+            var gitHubOwner = new CfnParameter(this, "GitHubOwner", new CfnParameterProps
+            {
+                Type = "String",
+                Default = "danielwohlgemuth",
+                Description = "The GitHub account name",
+            });
+            var gitHubRepo = new CfnParameter(this, "GitHubRepo", new CfnParameterProps
+            {
+                Type = "String",
+                Default = "experiments",
+                Description = "The GitHub repo",
+            });
+            var gitHubPath = new CfnParameter(this, "GitHubPath", new CfnParameterProps
+            {
+                Type = "String",
+                Default = "2024/blazor-todo-list/frontend/.*",
+                Description = "The path to the project folder of the frontend",
+            });
+
             // S3
             var bucket = new Bucket(this, "Frontend", new BucketProps
             {
@@ -39,15 +58,15 @@ namespace Cdk
             // CodeBuild
             var gitHubSource = Source.GitHub(new GitHubSourceProps
             {
-                Owner = "danielwohlgemuth",
-                Repo = "experiments",
+                Owner = gitHubOwner.ValueAsString,
+                Repo = gitHubRepo.ValueAsString,
                 Webhook = true,
                 WebhookFilters = new[]
                 {
                     FilterGroup
                         .InEventOf(EventAction.PUSH)
                         .AndBranchIs("main")
-                        .AndFilePathIs("2024/blazor-todo-list/frontend/.*"),
+                        .AndFilePathIs(gitHubPath.ValueAsString),
                 },
                 CloneDepth = 1,
             });
@@ -80,32 +99,48 @@ namespace Cdk
                 }},
             });
 
-            var project = new Project(this, "Project", new ProjectProps
+            var role = new Role(this, "Role", new RoleProps
             {
-                ProjectName = "blazor-todo-list",
-                // Leave the line saying `Source = gitHubSource,` commented when deploying the CDK stack for the first time.
-                // Uncomment and redeploy it after the first deployment was successful.
-                // Source = gitHubSource,
-                BuildSpec = buildSpec,
+                AssumedBy = new ServicePrincipal("codebuild.amazonaws.com")
             });
-
-            var policyStatement = new PolicyStatement(new PolicyStatementProps
+            // Allow connecting to GitHub
+            role.AddToPolicy(new PolicyStatement(new PolicyStatementProps
             {
                 Effect = Effect.ALLOW,
                 Actions = new[]
                 {
                     "codeconnections:GetConnection",
                     "codeconnections:GetConnectionToken",
-                    "s3:PutObject",
                 },
                 Resources = new[]
                 {
                     "arn:aws:codeconnections:*:*:connection/*",
+                },
+            }));
+            // Allow uploading the website files to S3
+            role.AddToPolicy(new PolicyStatement(new PolicyStatementProps
+            {
+                Effect = Effect.ALLOW,
+                Actions = new[]
+                {
+                    "s3:PutObject",
+                },
+                Resources = new[]
+                {
                     $"arn:aws:s3:::{bucket.BucketName}",
                     $"arn:aws:s3:::{bucket.BucketName}/*",
                 },
+            }));
+
+            new Project(this, "Project", new ProjectProps
+            {
+                ProjectName = "blazor-todo-list",
+                // Leave the line saying `Source = gitHubSource,` commented when deploying the CDK stack for the first time.
+                // Uncomment and redeploy it after the first deployment was successful.
+                // Source = gitHubSource,
+                BuildSpec = buildSpec,
+                Role = role,
             });
-            project.AddToRolePolicy(policyStatement);
 
             new CfnOutput(this, "CloudFrontURL", new CfnOutputProps
             {
