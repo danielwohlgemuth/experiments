@@ -1,0 +1,122 @@
+.page {
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.1);
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  font-family: var(--font-geist-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    --gray-rgb: 255, 255, 255;
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.245);
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+
+    --button-primary-hover: #ccc;
+    --button-secondary-hover: #1a1a1a;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  grid-row-start: 2;
+  max-width: 400px;
+  height: 100vh;
+  padding: 16px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  border-width: medium;
+  border-style: solid;
+  border-radius: 20px;
+  border-color: var(--gray-alpha-100);
+  padding: 2px;
+  margin-top: auto;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  width: 100%;
+}
+
+.message {
+  max-width: 80%;
+  padding: 10px;
+  background-color: var(--gray-alpha-100);
+  color: var(--button-primary-hover);
+  animation-name: highlight;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(.85,0,.94,.61);
+}
+
+@keyframes highlight {
+  0% {
+    background-color: var(--gray-alpha-200);
+  }
+  100% {
+    background-color: var(--gray-alpha-100);
+  }
+}
+
+.messageRight {
+  text-align: right;
+  margin: 0.5rem 0.5rem 0.5rem auto;
+  border-radius: 1.125rem 0 1.125rem 1.125rem;
+}
+
+.messageLeft {
+  margin: 0.5rem auto 0.5rem 0.5rem;
+  border-radius: 0 1.125rem 1.125rem 1.125rem;
+}
+
+.messageCenter {
+  text-align: center;
+  color: var(--button-primary-hover);
+}
+
+.action {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  color: #383838;
+  width: 100%;
+}
+
+.newMessage {
+  flex-grow: 1;
+  border: none;
+  border-radius: 1.125rem;
+  padding: 10px 16px;
+  background-color: var(--gray-alpha-100);
+  color: var(--button-primary-hover);
+  transition: 0.3s;
+  flex-grow: 1;
+}
+
+.sendButton {
+  font-weight: 700;
+  border: none;
+  border-radius: 1.125rem;
+  padding: 10px 15px;
+  background-color: var(--gray-alpha-100);
+  color: var(--button-primary-hover);
+  transition: 0.3s;
+}
+
+.sendButton:hover {
+  background-color: var(--gray-alpha-200);
+}
+
+@media (max-width: 600px) {
+  .main {
+    align-items: center;
+  }
+}
