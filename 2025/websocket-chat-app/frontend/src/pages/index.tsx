@@ -59,7 +59,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log('process.env.NEXT_PUBLIC_WEBSOCKET_URL', process.env.NEXT_PUBLIC_WEBSOCKET_URL)
     if (!process.env.NEXT_PUBLIC_WEBSOCKET_URL) {
       console.error('The NEXT_PUBLIC_WEBSOCKET_URL env var should be set')
       return;
