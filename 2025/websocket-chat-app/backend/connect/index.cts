@@ -1,19 +1,18 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { APIGatewayProxyResult, APIGatewayProxyWebsocketEventV2 } from 'aws-lambda';
+import Redis from 'ioredis';
+
+
+const redisHost = process.env.REDIS_HOST;
+const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10);
+
+const redis = new Redis({
+    host: redisHost,
+    port: redisPort,
+});
 
 export const handler = async (event: APIGatewayProxyWebsocketEventV2): Promise<APIGatewayProxyResult> => {
-    const client = new DynamoDBClient({});
-    const docClient = DynamoDBDocumentClient.from(client);
-    const command = new PutCommand({
-        TableName: process.env.TABLE_NAME,
-        Item: {
-            connectionId: event.requestContext.connectionId,
-        },
-    });
-
     try {
-        await docClient.send(command)
+        await redis.set(event.requestContext.connectionId, '');
     } catch (err) {
         console.log(err)
         return {

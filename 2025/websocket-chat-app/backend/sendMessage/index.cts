@@ -1,18 +1,20 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi";
 import { APIGatewayProxyResult, APIGatewayProxyWebsocketEventV2 } from 'aws-lambda';
+import Redis from 'ioredis';
+
+
+const redisHost = process.env.REDIS_HOST;
+const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10);
+
+const redis = new Redis({
+    host: redisHost,
+    port: redisPort,
+});
 
 export const handler = async (event: APIGatewayProxyWebsocketEventV2): Promise<APIGatewayProxyResult> => {
-    const client = new DynamoDBClient({});
-    const docClient = DynamoDBDocumentClient.from(client);
-    const ddbcommand = new ScanCommand({
-        TableName: process.env.TABLE_NAME
-    })
-
     let connections;
     try {
-        connections = await docClient.send(ddbcommand);
+        connections = await redis.keys('*');
     } catch (err) {
         console.log(err)
         return {
@@ -28,7 +30,7 @@ export const handler = async (event: APIGatewayProxyWebsocketEventV2): Promise<A
 
     const message = JSON.parse(event.body ?? '{}').message;
 
-    const sendMessages = connections.Items.map(async ({ connectionId }) => {
+    const sendMessages = connections.map(async (connectionId) => {
         if (connectionId !== event.requestContext.connectionId) {
             try {
                 await callbackAPI.send(new PostToConnectionCommand(
