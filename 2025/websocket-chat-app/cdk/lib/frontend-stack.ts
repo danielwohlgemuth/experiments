@@ -82,6 +82,7 @@ export class FrontendStack extends cdk.Stack {
           "on-failure": "ABORT",
           commands: [
             `aws s3 cp out/ s3://${bucket.bucketName}/ --recursive`,
+            `AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${distribution.distributionId} --paths "/*"`
           ],
         },
       },
@@ -110,6 +111,16 @@ export class FrontendStack extends cdk.Stack {
       resources: [
         `arn:aws:s3:::${bucket.bucketName}`,
         `arn:aws:s3:::${bucket.bucketName}/*`,
+      ],
+    }));
+    // Allow invalidating the CloudFront cache
+    role.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [
+        "cloudfront:CreateInvalidation",
+      ],
+      resources: [
+        `arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`,
       ],
     }));
 

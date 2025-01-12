@@ -52,7 +52,7 @@ aws codebuild list-source-credentials --query "sourceCredentialsInfos[?serverTyp
 
 ### Deploy using CDK
 
-Deploy 
+Deploy the frontend and backend services to AWS
 
 ```bash
 cd cdk
@@ -94,3 +94,14 @@ to see it appear on the other connection.
 ```bash
 {"action": "sendMessage", "message": "Hello, everyone! 🎉"}
 ```
+
+## Cleanup AWS
+
+Run the following command to delete any AWS services used during this project:
+
+```bash
+cdk destroy --all
+```
+
+Manually remove the GitHub connection in CodeBuild.
+
