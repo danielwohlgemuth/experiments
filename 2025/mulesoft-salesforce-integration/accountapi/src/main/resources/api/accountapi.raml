@@ -1,0 +1,54 @@
+#%RAML 1.0
+types:
+  Account:
+    properties:
+      Name:
+        example: Example
+        type: string
+      Id?:
+        example: Example
+        type: string
+title: Account API
+baseUri: api.samplebaseuri.com
+mediaType:
+  - application/json
+version: 1.0.0
+protocols:
+  - HTTPS
+  - HTTP
+/accounts:
+  post:
+    displayName: Create Accounts
+    body:
+      application/json:
+        items:
+          type: Account
+    responses:
+      "200": {}
+    securedBy: []
+  put:
+    displayName: Update Account
+    body:
+      type: Account
+    responses:
+      "200": {}
+    securedBy: []
+  get:
+    displayName: Get Accounts
+    body: {}
+    responses:
+      "200":
+        body:
+          items:
+            type: Account
+    securedBy: []
+  delete:
+    displayName: Delete Account
+    queryParameters:
+      AccountId:
+        example: Example
+        type: string
+    body: {}
+    responses:
+      "200": {}
+    securedBy: []
