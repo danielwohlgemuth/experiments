@@ -1,0 +1,33 @@
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+  prometheus_data_generator_rose:
+    build: ./prometheus-data-generator
+    ports:
+      - 9000:9000
+    volumes:
+      - ./prometheus-data-generator-rose.yml:/home/appuser/config.yml
+
+  prometheus_data_generator_sunflower:
+    build: ./prometheus-data-generator
+    ports:
+      - 9001:9000
+    volumes:
+      - ./prometheus-data-generator-sunflower.yml:/home/appuser/config.yml
+
+  prometheus_data_generator_tulip:
+    build: ./prometheus-data-generator
+    ports:
+      - 9002:9000
+    volumes:
+      - ./prometheus-data-generator-tulip.yml:/home/appuser/config.yml
+
+volumes:
+  prometheus-data:

@@ -1,0 +1,22 @@
+config:
+  - name: number_of_flowers
+    description: The number of flowers we have.
+    type: gauge
+    labels: [name, attribute]
+    sequence:
+      - time: 5
+        interval: 1
+        eval_time: 5
+        values: 0-30
+        operation: inc
+        labels:
+          name: Sunflower
+          attribute: Heliotropism
+      - time: 5
+        interval: 1
+        eval_time: 5
+        values: 0-10
+        operation: dec
+        labels:
+          name: Sunflower
+          attribute: Heliotropism
