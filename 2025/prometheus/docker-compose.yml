@@ -29,5 +29,13 @@ services:
     volumes:
       - ./prometheus-data-generator-tulip.yml:/home/appuser/config.yml
 
+  grafana:
+    image: grafana/grafana:12.0.0
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+
 volumes:
   prometheus-data:
+  grafana-data:
