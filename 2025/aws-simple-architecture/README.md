@@ -54,6 +54,10 @@ A [Reverse Proxy](https://en.wikipedia.org/wiki/Reverse_proxy) can help passing 
 
 ## Setup
 
+### Prerequisite
+
+Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-architecture/create-key-pair.sh) script to create one locally that also gets uploaded to AWS.
+
 ### Network configuration for the AWS Simple Architecture
 
 ![AWS Simple Architecture Network](/2025/aws-simple-architecture/assets/aws-simple-architecture-network.drawio.png)
