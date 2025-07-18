@@ -56,6 +56,14 @@ A [Reverse Proxy](https://en.wikipedia.org/wiki/Reverse_proxy) can help passing 
 
 ### Prerequisite
 
+Have the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting-started.html) installed.
+
+Initialize the CDK toolkit stack in AWS.
+
+```bash
+cdk bootstrap
+```
+
 Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-architecture/create-key-pair.sh) script to create one locally that also gets uploaded to AWS.
 
 ### Network configuration for the AWS Simple Architecture
@@ -63,6 +71,46 @@ Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-
 ![AWS Simple Architecture Network](/2025/aws-simple-architecture/assets/aws-simple-architecture-network.drawio.png)
 
 [AWS Simple Architecture Network diagram file](https://app.diagrams.net/?title=aws-simple-architecture-network#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2025%2Faws-simple-architecture%2Fassets%2Faws-simple-architecture-network.drawio)
+
+### Bastion Host
+
+Deploy the stack to AWS.
+
+```bash
+cd bastion-host
+cdk deploy
+cd ..
+```
+
+Take note of the IP address from the next command and replace it where is says `<PRIVATE_IP_HERE>`.
+
+```bash
+aws cloudformation describe-stacks --stack-name BastionHostStack --query "Stacks[0].Outputs[?OutputKey=='PrivateServerPrivateIP'].OutputValue" --output text
+```
+
+Store the public IP address from the bastion host in a variable.
+
+```bash
+BASTION_IP=$(aws cloudformation describe-stacks --stack-name BastionHostStack --query "Stacks[0].Outputs[?OutputKey=='BastionHostPublicIP'].OutputValue" --output text)
+```
+
+Copy the SSH key into the bastion host to be able to login to the private server later.
+
+```bash
+scp -i aws-simple-architecture-key-pair aws-simple-architecture-key-pair ec2-user@$BASTION_IP:.
+```
+
+Access the bastion host through SSH.
+
+```bash
+ssh -i aws-simple-architecture-key-pair ec2-user@$BASTION_IP
+```
+
+Access the private host from the bastion host through SSH.
+
+```bash
+ssh -i aws-simple-architecture-key-pair ec2-user@<PRIVATE_IP_HERE>
+```
 
 ## Resources
 - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html

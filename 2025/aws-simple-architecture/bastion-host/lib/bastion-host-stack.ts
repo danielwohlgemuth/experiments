@@ -24,18 +24,70 @@ export class BastionHostStack extends cdk.Stack {
       ],
     });
 
-    // Create a bastion host
-    const bastionHost = new ec2.Instance(this, 'BastionHost', {
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PUBLIC,
-      },
-      instanceName: 'bastion-host',
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
-      machineImage: ec2.MachineImage.latestAmazonLinux2023(),
-      keyName: 'aws-simple-architecture-key-pair',
-      sourceDestCheck: false,
-      vpc: vpc,
+    const bastionHostNACL = new ec2.CfnNetworkAcl(this, 'BastionHostNACL', {
+      vpcId: vpc.vpcId,
+      tags: [{ key: 'Name', value: 'bastion-host-nacl' }]
     });
+
+    new ec2.CfnNetworkAclEntry(this, 'InboundResponse', {
+      networkAclId: bastionHostNACL.ref,
+      ruleNumber: 100,
+      protocol: 6, // TCP
+      ruleAction: 'allow',
+      egress: false,
+      cidrBlock: '0.0.0.0/0',
+      portRange: {
+        from: 1024,
+        to: 65535,
+      },
+    });
+
+    new ec2.CfnNetworkAclEntry(this, 'InboundSsh', {
+      networkAclId: bastionHostNACL.ref,
+      ruleNumber: 200,
+      protocol: 6, // TCP
+      ruleAction: 'allow',
+      egress: false,
+      cidrBlock: '0.0.0.0/0',
+      portRange: {
+        from: 22,
+        to: 22,
+      },
+    });
+
+    new ec2.CfnNetworkAclEntry(this, 'OutboundResponse', {
+      networkAclId: bastionHostNACL.ref,
+      ruleNumber: 100,
+      protocol: 6, // TCP
+      ruleAction: 'allow',
+      egress: true,
+      cidrBlock: '0.0.0.0/0',
+      portRange: {
+        from: 1024,
+        to: 65535,
+      },
+    });
+
+    new ec2.CfnNetworkAclEntry(this, 'OutboundSsh', {
+      networkAclId: bastionHostNACL.ref,
+      ruleNumber: 200,
+      protocol: 6, // TCP
+      ruleAction: 'allow',
+      egress: true,
+      cidrBlock: '0.0.0.0/0',
+      portRange: {
+        from: 22,
+        to: 22,
+      },
+    });
+
+    // Associate the NACL to a subnet
+    new ec2.CfnSubnetNetworkAclAssociation(this, 'BastionHostNACLAssociation', {
+      subnetId: vpc.publicSubnets[0].subnetId,
+      networkAclId: bastionHostNACL.ref,
+    });
+
+    const keyPair = ec2.KeyPair.fromKeyPairName(this, 'KeyPair', 'aws-simple-architecture-key-pair');
 
     // Create a security group for the bastion host
     const bastionHostSecurityGroup = new ec2.SecurityGroup(this, 'BastionHostSecurityGroup', {
@@ -52,6 +104,20 @@ export class BastionHostStack extends cdk.Stack {
       'Allow SSH traffic',
     );
 
+    // Create a bastion host
+    const bastionHost = new ec2.Instance(this, 'BastionHost', {
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC,
+      },
+      instanceName: 'bastion-host',
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
+      machineImage: ec2.MachineImage.latestAmazonLinux2023(),
+      keyPair: keyPair,
+      sourceDestCheck: false,
+      securityGroup: bastionHostSecurityGroup,
+      vpc: vpc,
+    });
+
     // Create a security group for the private server
     const privateServerSecurityGroup = new ec2.SecurityGroup(this, 'PrivateServerSecurityGroup', {
       allowAllOutbound: true,
@@ -59,13 +125,6 @@ export class BastionHostStack extends cdk.Stack {
       securityGroupName: 'private-server-security-group',
       vpc: vpc,
     });
-
-    // Add rules to allow HTTP traffic and SSH from bastion host only
-    privateServerSecurityGroup.addIngressRule(
-      ec2.Peer.ipv4('10.0.0.0/16'),
-      ec2.Port.tcp(80),
-      'Allow HTTP traffic from VPC',
-    );
 
     privateServerSecurityGroup.addIngressRule(
       bastionHostSecurityGroup,
@@ -81,7 +140,7 @@ export class BastionHostStack extends cdk.Stack {
       instanceName: 'private-server',
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
       machineImage: ec2.MachineImage.latestAmazonLinux2023(),
-      keyName: 'aws-simple-architecture-key-pair',
+      keyPair: keyPair,
       vpc: vpc,
       securityGroup: privateServerSecurityGroup,
     });
