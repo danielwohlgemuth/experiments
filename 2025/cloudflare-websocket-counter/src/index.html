@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WebSocket Counter</title>
+	<style>
+		body { 
+			font-family: Arial, sans-serif; 
+			max-width: 800px; 
+			margin: 50px auto; 
+			padding: 20px;
+			text-align: center;
+			transition: background-color 0.3s ease, color 0.3s ease;
+		}
+		
+		/* Light theme (default) */
+		body {
+			background-color: #ffffff;
+			color: #333;
+		}
+		.counter-display {
+			background: #f0f0f0;
+			padding: 30px;
+			border-radius: 10px;
+			margin: 20px 0;
+			transition: background-color 0.3s ease;
+		}
+		.text { 
+			font-size: 24px; 
+			font-weight: bold;
+			color: #333;
+			margin-bottom: 10px;
+			transition: color 0.3s ease;
+		}
+		.counter { 
+			font-size: 48px; 
+			color: #007acc;
+			font-weight: bold;
+			transition: transform 0.2s ease-out, color 0.3s ease;
+			display: inline-block;
+		}
+		.status {
+			margin-top: 20px;
+			padding: 10px;
+			border-radius: 5px;
+		}
+		.connected { background-color: #d4edda; color: #155724; }
+		.disconnected { background-color: #f8d7da; color: #721c24; }
+		.instructions {
+			background: #e9ecef;
+			padding: 20px;
+			border-radius: 5px;
+			margin-top: 30px;
+			text-align: left;
+			transition: background-color 0.3s ease;
+		}
+		
+		/* Dark theme */
+		body.dark-theme {
+			background-color: #1a1a1a;
+			color: #e0e0e0;
+		}
+		body.dark-theme .counter-display {
+			background: #2d2d2d;
+		}
+		body.dark-theme .text {
+			color: #e0e0e0;
+		}
+		body.dark-theme .counter {
+			color: #4db8ff;
+		}
+		body.dark-theme .connected { 
+			background-color: #1e4d36; 
+			color: #a3d9b1; 
+		}
+		body.dark-theme .disconnected { 
+			background-color: #4d1e23; 
+			color: #f5a3a3; 
+		}
+		body.dark-theme .instructions {
+			background: #2d2d2d;
+		}
+		
+		/* Theme toggle button */
+		.theme-toggle {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: none;
+			border: 2px solid #ccc;
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			font-size: 24px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.theme-toggle:hover {
+			transform: scale(1.1);
+			border-color: #007acc;
+		}
+		body.dark-theme .theme-toggle {
+			border-color: #555;
+		}
+		body.dark-theme .theme-toggle:hover {
+			border-color: #4db8ff;
+		}
+		
+		/* Scale animation - only applies if user hasn't disabled animations */
+		@media (prefers-reduced-motion: no-preference) {
+			.counter.animate {
+				animation: scaleUpDown 0.3s ease-out;
+			}
+		}
+		
+		@keyframes scaleUpDown {
+			0% { 
+				transform: scale(1); 
+				text-shadow: none;
+			}
+			50% { 
+				transform: scale(1.2); 
+				text-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 40px rgba(255, 165, 0, 0.4);
+			}
+			100% { 
+				transform: scale(1); 
+				text-shadow: none;
+			}
+		}
+	</style>
+</head>
+<body>
+	<button class="theme-toggle" id="themeToggle" title="Toggle dark/light theme">🌙</button>
+	
+	<h1>Real-time Counter</h1>
+	
+	<div class="counter-display">
+		<div class="text" id="currentText">No text set</div>
+		<div class="counter" id="counter">0</div>
+	</div>
+	
+	<div id="status" class="status disconnected">Connecting...</div>
+	
+	<div class="instructions">
+		<h3>How to use:</h3>
+		<p>Add <code>?text=yourtext</code> to the URL to set/increment the counter.</p>
+		<p>Examples:</p>
+		<ul>
+			<li><code id="example1"></code></li>
+			<li><code id="example2"></code></li>
+		</ul>
+		<p>The counter increases each time the same text is used, and resets when different text is provided.</p>
+	</div>
+
+	<script>
+		const textElement = document.getElementById('currentText');
+		const counterElement = document.getElementById('counter');
+		const statusElement = document.getElementById('status');
+		const themeToggle = document.getElementById('themeToggle');
+		
+		let previousCounterValue = null;
+		
+		// Theme management
+		function initTheme() {
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.body.classList.add('dark-theme');
+				themeToggle.textContent = '☀️';
+			} else {
+				themeToggle.textContent = '🌙';
+			}
+		}
+
+		function updateExamples() {
+			const origin = window.location.origin;
+			document.getElementById('example1').textContent = `${origin}/?text=hello`;
+			document.getElementById('example2').textContent = `${origin}/?text=test`;
+		}
+		
+		function toggleTheme() {
+			document.body.classList.toggle('dark-theme');
+			const isDark = document.body.classList.contains('dark-theme');
+			themeToggle.textContent = isDark ? '☀️' : '🌙';
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+		}
+		
+		themeToggle.addEventListener('click', toggleTheme);
+		
+		function animateCounter() {
+			// Remove the animation class if it exists
+			counterElement.classList.remove('animate');
+			
+			// Force a reflow to ensure the class removal takes effect
+			counterElement.offsetHeight;
+			
+			// Add the animation class
+			counterElement.classList.add('animate');
+			
+			// Remove the class after animation completes
+			setTimeout(() => {
+				counterElement.classList.remove('animate');
+			}, 300);
+		}
+		
+		function connect() {
+			const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+			const ws = new WebSocket(protocol + '//' + window.location.host);
+			
+			ws.onopen = function() {
+				statusElement.textContent = 'Connected - Updates in real-time';
+				statusElement.className = 'status connected';
+			};
+			
+			ws.onmessage = function(event) {
+				const data = JSON.parse(event.data);
+				if (data.type === 'update') {
+					textElement.textContent = data.text || 'No text set';
+					
+					// Only animate if the counter value actually changed
+					if (previousCounterValue !== null && previousCounterValue !== data.counter) {
+						animateCounter();
+					}
+					
+					counterElement.textContent = data.counter;
+					previousCounterValue = data.counter;
+				}
+			};
+			
+			ws.onclose = function() {
+				statusElement.textContent = 'Disconnected - Attempting to reconnect...';
+				statusElement.className = 'status disconnected';
+				// Reconnect after 3 seconds
+				setTimeout(connect, 3000);
+			};
+			
+			ws.onerror = function() {
+				statusElement.textContent = 'Connection error - Retrying...';
+				statusElement.className = 'status disconnected';
+			};
+		}
+		
+		// Initialize theme and start connection
+		initTheme();
+		updateExamples();
+		connect();
+	</script>
+</body>
+</html>
