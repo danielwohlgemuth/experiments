@@ -1,6 +1,6 @@
 # Cloudflare WebSocket Counter
 
-A real-time WebSocket counter app running on Cloudflare Workers, using Durable Objects and KV storage for state management.
+A real-time WebSocket counter app running on Cloudflare Workers, using Durable Objects for state management.
 
 ![WebSocket Counter Demo](./assets/websocket-counter.png)
 
@@ -13,25 +13,7 @@ A real-time WebSocket counter app running on Cloudflare Workers, using Durable O
 
 ## Setup & Development
 
-1. **Install dependencies:**
-    ```sh
-    npm install
-    ```
-
-2. **Create KV Namespace:**
-    ```sh
-    npm run kv-create
-    ```
-    Update `wrangler.jsonc` with the KV namespace ID.
-
-3. **Upload static HTML to KV:**
-    ```sh
-    npm run kv-update
-    # or to upload to Cloudflare:
-    npm run kv-deploy
-    ```
-
-4. **Start the development server:**
+1. **Start the development server:**
     ```sh
     npm run dev
     # or
@@ -39,14 +21,14 @@ A real-time WebSocket counter app running on Cloudflare Workers, using Durable O
     ```
     Open [http://localhost:8787/](http://localhost:8787/) in your browser.
 
-5. **Generate Cloudflare types (after changing bindings in wrangler.jsonc):**
+2. **Generate Cloudflare types (after changing bindings in wrangler.jsonc):**
     ```sh
     npm run cf-typegen
     # or
     npm run types
     ```
 
-6. **Deploy to Cloudflare:**
+3. **Deploy to Cloudflare:**
     ```sh
     npm run deploy
     ```
@@ -54,6 +36,3 @@ A real-time WebSocket counter app running on Cloudflare Workers, using Durable O
 ---
 
 For more details, see [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/).
-
-
-

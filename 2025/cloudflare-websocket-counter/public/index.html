@@ -177,8 +177,8 @@
 
 		function updateExamples() {
 			const origin = window.location.origin;
-			document.getElementById('example1').textContent = `${origin}/?text=hello`;
-			document.getElementById('example2').textContent = `${origin}/?text=test`;
+			document.getElementById('example1').textContent = `${origin}/api/update?text=hello`;
+			document.getElementById('example2').textContent = `${origin}/api/update?text=test`;
 		}
 		
 		function toggleTheme() {
@@ -208,7 +208,7 @@
 		
 		function connect() {
 			const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-			const ws = new WebSocket(protocol + '//' + window.location.host);
+			const ws = new WebSocket(protocol + '//' + window.location.host + '/api/ws');
 			
 			ws.onopen = function() {
 				statusElement.textContent = 'Connected - Updates in real-time';

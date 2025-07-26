@@ -3,9 +3,6 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"kv-create": "wrangler kv namespace create WebsocketCounter",
-		"kv-update": "wrangler kv key put 'index.html' --path=./src/index.html --binding=WebsocketCounter",
-		"kv-deploy": "wrangler kv key put 'index.html' --path=./src/index.html --binding=WebsocketCounter --remote",
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",

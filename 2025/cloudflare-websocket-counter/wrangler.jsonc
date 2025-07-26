@@ -7,6 +7,11 @@
 	"name": "websocket-counter",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-07-12",
+	"assets": {
+		"directory": "./public/",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": ["/api/*"]
+	},
 	"migrations": [
 		{
 			"new_sqlite_classes": [
@@ -23,12 +28,6 @@
 			}
 		]
 	},
-	"kv_namespaces": [
-	  {
-		"binding": "WebsocketCounter",
-		"id": "8f545bd8d1e54bcea4546aa0c0aad6e7"
-	  }
-	],
 	"observability": {
 		"enabled": true
 	}
