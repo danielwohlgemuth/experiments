@@ -66,6 +66,10 @@ cdk bootstrap
 
 Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-architecture/create-key-pair.sh) script to create one locally that also gets uploaded to AWS.
 
+```bash
+./create-key-pair.sh
+```
+
 ### Network configuration for the AWS Simple Architecture
 
 ![AWS Simple Architecture Network](/2025/aws-simple-architecture/assets/aws-simple-architecture-network.drawio.png)
@@ -111,6 +115,21 @@ Access the private host from the bastion host through SSH.
 ```bash
 ssh -i aws-simple-architecture-key-pair ec2-user@<PRIVATE_IP_HERE>
 ```
+
+### NAT Instance
+
+Deploy the stack to AWS.
+
+```bash
+cd nat-instance
+cdk deploy
+cd ..
+```
+
+The NAT instance allows private instances to access the internet. To verify that the NAT instance is working correctly, you can use the [Cloudflare Websocket Counter](/2025/cloudflare-websocket-counter) project. The private instance in this setup will automatically make HTTP requests to the websocket counter, demonstrating that it can reach the internet through the NAT instance.
+
+To troubleshoot the network interface name for the public instance user data script, you can use the `netstat -i` command.
+
 
 ## Resources
 - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html
