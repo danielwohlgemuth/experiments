@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
-export class BastionHostStack extends cdk.Stack {
+export class SshJumpHostStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -24,13 +24,13 @@ export class BastionHostStack extends cdk.Stack {
       ],
     });
 
-    const bastionHostNACL = new ec2.CfnNetworkAcl(this, 'BastionHostNACL', {
+    const jumpHostNACL = new ec2.CfnNetworkAcl(this, 'JumpHostNACL', {
       vpcId: vpc.vpcId,
-      tags: [{ key: 'Name', value: 'bastion-host-nacl' }]
+      tags: [{ key: 'Name', value: 'ssh-jump-host-nacl' }]
     });
 
     new ec2.CfnNetworkAclEntry(this, 'InboundResponse', {
-      networkAclId: bastionHostNACL.ref,
+      networkAclId: jumpHostNACL.ref,
       ruleNumber: 100,
       protocol: 6, // TCP
       ruleAction: 'allow',
@@ -43,7 +43,7 @@ export class BastionHostStack extends cdk.Stack {
     });
 
     new ec2.CfnNetworkAclEntry(this, 'InboundSsh', {
-      networkAclId: bastionHostNACL.ref,
+      networkAclId: jumpHostNACL.ref,
       ruleNumber: 200,
       protocol: 6, // TCP
       ruleAction: 'allow',
@@ -56,7 +56,7 @@ export class BastionHostStack extends cdk.Stack {
     });
 
     new ec2.CfnNetworkAclEntry(this, 'OutboundResponse', {
-      networkAclId: bastionHostNACL.ref,
+      networkAclId: jumpHostNACL.ref,
       ruleNumber: 100,
       protocol: 6, // TCP
       ruleAction: 'allow',
@@ -69,7 +69,7 @@ export class BastionHostStack extends cdk.Stack {
     });
 
     new ec2.CfnNetworkAclEntry(this, 'OutboundSsh', {
-      networkAclId: bastionHostNACL.ref,
+      networkAclId: jumpHostNACL.ref,
       ruleNumber: 200,
       protocol: 6, // TCP
       ruleAction: 'allow',
@@ -82,39 +82,39 @@ export class BastionHostStack extends cdk.Stack {
     });
 
     // Associate the NACL to a subnet
-    new ec2.CfnSubnetNetworkAclAssociation(this, 'BastionHostNACLAssociation', {
+    new ec2.CfnSubnetNetworkAclAssociation(this, 'JumpHostNACLAssociation', {
       subnetId: vpc.publicSubnets[0].subnetId,
-      networkAclId: bastionHostNACL.ref,
+      networkAclId: jumpHostNACL.ref,
     });
 
     const keyPair = ec2.KeyPair.fromKeyPairName(this, 'KeyPair', 'aws-simple-architecture-key-pair');
 
-    // Create a security group for the bastion host
-    const bastionHostSecurityGroup = new ec2.SecurityGroup(this, 'BastionHostSecurityGroup', {
+    // Create a security group for the jump host
+    const jumpHostSecurityGroup = new ec2.SecurityGroup(this, 'JumpHostSecurityGroup', {
       allowAllOutbound: true,
       description: 'Allow all outbound traffic',
-      securityGroupName: 'bastion-host-security-group',
+      securityGroupName: 'ssh-jump-host-security-group',
       vpc: vpc,
     });
 
     // Add a rule to allow SSH traffic
-    bastionHostSecurityGroup.addIngressRule(
+    jumpHostSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(22),
       'Allow SSH traffic',
     );
 
-    // Create a bastion host
-    const bastionHost = new ec2.Instance(this, 'BastionHost', {
+    // Create a jump host
+    const jumpHost = new ec2.Instance(this, 'JumpHost', {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PUBLIC,
       },
-      instanceName: 'bastion-host',
+      instanceName: 'ssh-jump-host',
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
       machineImage: ec2.MachineImage.latestAmazonLinux2023(),
       keyPair: keyPair,
       sourceDestCheck: false,
-      securityGroup: bastionHostSecurityGroup,
+      securityGroup: jumpHostSecurityGroup,
       vpc: vpc,
     });
 
@@ -127,9 +127,9 @@ export class BastionHostStack extends cdk.Stack {
     });
 
     privateServerSecurityGroup.addIngressRule(
-      bastionHostSecurityGroup,
+      jumpHostSecurityGroup,
       ec2.Port.tcp(22),
-      'Allow SSH traffic from bastion host only',
+      'Allow SSH traffic from jump host only',
     );
 
     // Create a private server
@@ -151,10 +151,10 @@ export class BastionHostStack extends cdk.Stack {
       description: 'Private IP of the private server',
     });
 
-    // Output the bastion host's public IP
-    new cdk.CfnOutput(this, 'BastionHostPublicIP', {
-      value: bastionHost.instancePublicIp,
-      description: 'Public IP of the bastion host',
+    // Output the jump host's public IP
+    new cdk.CfnOutput(this, 'JumpHostPublicIP', {
+      value: jumpHost.instancePublicIp,
+      description: 'Public IP of the jump host',
     });
   }
 }

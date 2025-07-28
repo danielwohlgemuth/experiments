@@ -1,8 +1,8 @@
 {
-  "name": "bastion-host",
+  "name": "ssh-jump-host",
   "version": "0.1.0",
   "bin": {
-    "bastion-host": "bin/bastion-host.js"
+    "ssh-jump-host": "bin/ssh-jump-host.js"
   },
   "scripts": {
     "build": "tsc",

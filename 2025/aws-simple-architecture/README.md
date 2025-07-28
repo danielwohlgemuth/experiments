@@ -1,7 +1,7 @@
 # AWS Simple Architecture
 
 In this project, a simple AWS architecture is created to explore the following concepts:
-- [Bastion Host](#bastion-host)
+- [SSH Jump Host](#ssh-jump-host)
 - [NAT Instance](#nat-instance)
 - [Reverse Proxy](#reverse-proxy)
 
@@ -30,11 +30,15 @@ Summarizing the table, having a NAT Gateway would cost $32.85 per month, while h
 
 ### Bastion Host
 
-A [Bastion Host](https://en.wikipedia.org/wiki/Bastion_host) setup allows reaching a private server that's not directly exposed on the internet by first connecting to an intermediary server, that is exposed on the internet and can also reach the private server, and then connecting from there to the private server.
+A [Bastion Host](https://en.wikipedia.org/wiki/Bastion_host) is a hardened computer positioned between untrusted networks (like the internet) and trusted internal networks. It serves as a secure access point to reach private servers that are not directly exposed to the internet. In this setup, you first connect to the bastion host from the internet, then use it as a secure jump point to access private servers within the trusted network.
 
-![Bastion Host](/2025/aws-simple-architecture/assets/aws-bastion-host.drawio.png)
+### SSH Jump Host
 
-[Bastion Host diagram file](https://app.diagrams.net/?title=aws-bastion-host#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2025%2Faws-simple-architecture%2Fassets%2Faws-bastion-host.drawio)
+An [Jump Host](https://en.wikipedia.org/wiki/Jump_server) is a server that acts as an intermediary for accessing other servers in a secure network. While similar to a bastion host, a jump host is typically simpler and focuses specifically on providing SSH access to private resources.
+
+![SSH Jump Host](/2025/aws-simple-architecture/assets/aws-ssh-jump-host.drawio.png)
+
+[SSH Jump Host diagram file](https://app.diagrams.net/?title=aws-ssh-jump-host#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2025%2Faws-simple-architecture%2Fassets%2Faws-ssh-jump-host.drawio)
 
 ### NAT Instance
 
@@ -76,12 +80,12 @@ Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-
 
 [AWS Simple Architecture Network diagram file](https://app.diagrams.net/?title=aws-simple-architecture-network#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2025%2Faws-simple-architecture%2Fassets%2Faws-simple-architecture-network.drawio)
 
-### Bastion Host
+### SSH Jump Host
 
 Deploy the stack to AWS.
 
 ```bash
-cd bastion-host
+cd ssh-jump-host
 cdk deploy
 cd ..
 ```
@@ -89,28 +93,28 @@ cd ..
 Take note of the IP address from the next command and replace it where is says `<PRIVATE_IP_HERE>`.
 
 ```bash
-aws cloudformation describe-stacks --stack-name BastionHostStack --query "Stacks[0].Outputs[?OutputKey=='PrivateServerPrivateIP'].OutputValue" --output text
+aws cloudformation describe-stacks --stack-name SshJumpHostStack --query "Stacks[0].Outputs[?OutputKey=='PrivateServerPrivateIP'].OutputValue" --output text
 ```
 
-Store the public IP address from the bastion host in a variable.
+Store the public IP address from the jump host in a variable.
 
 ```bash
-BASTION_IP=$(aws cloudformation describe-stacks --stack-name BastionHostStack --query "Stacks[0].Outputs[?OutputKey=='BastionHostPublicIP'].OutputValue" --output text)
+JUMP_HOST_IP=$(aws cloudformation describe-stacks --stack-name SshJumpHostStack --query "Stacks[0].Outputs[?OutputKey=='JumpHostPublicIP'].OutputValue" --output text)
 ```
 
-Copy the SSH key into the bastion host to be able to login to the private server later.
+Copy the SSH key into the jump host to be able to login to the private server later.
 
 ```bash
-scp -i aws-simple-architecture-key-pair aws-simple-architecture-key-pair ec2-user@$BASTION_IP:.
+scp -i aws-simple-architecture-key-pair aws-simple-architecture-key-pair ec2-user@$JUMP_HOST_IP:.
 ```
 
-Access the bastion host through SSH.
+Access the jump host through SSH.
 
 ```bash
-ssh -i aws-simple-architecture-key-pair ec2-user@$BASTION_IP
+ssh -i aws-simple-architecture-key-pair ec2-user@$JUMP_HOST_IP
 ```
 
-Access the private host from the bastion host through SSH.
+Access the private host from the jump host through SSH.
 
 ```bash
 ssh -i aws-simple-architecture-key-pair ec2-user@<PRIVATE_IP_HERE>
