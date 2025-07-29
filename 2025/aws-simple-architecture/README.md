@@ -34,7 +34,7 @@ A [Bastion Host](https://en.wikipedia.org/wiki/Bastion_host) is a hardened compu
 
 ### SSH Jump Host
 
-An [Jump Host](https://en.wikipedia.org/wiki/Jump_server) is a server that acts as an intermediary for accessing other servers in a secure network. While similar to a bastion host, a jump host is typically simpler and focuses specifically on providing SSH access to private resources.
+A [Jump Host](https://en.wikipedia.org/wiki/Jump_server) is a server that acts as an intermediary for accessing other servers in a secure network. While similar to a bastion host, a jump host is typically simpler and focuses specifically on providing SSH access to private resources.
 
 ![SSH Jump Host](/2025/aws-simple-architecture/assets/aws-ssh-jump-host.drawio.png)
 
@@ -80,7 +80,7 @@ Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-
 
 [AWS Simple Architecture Network diagram file](https://app.diagrams.net/?title=aws-simple-architecture-network#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2025%2Faws-simple-architecture%2Fassets%2Faws-simple-architecture-network.drawio)
 
-### SSH Jump Host
+### SSH Jump Host Setup
 
 Deploy the stack to AWS.
 
@@ -120,7 +120,7 @@ Access the private host from the jump host through SSH.
 ssh -i aws-simple-architecture-key-pair ec2-user@<PRIVATE_IP_HERE>
 ```
 
-### NAT Instance
+### NAT Instance Setup
 
 Deploy the stack to AWS.
 
@@ -132,8 +132,15 @@ cd ..
 
 The NAT instance allows private instances to access the internet. To verify that the NAT instance is working correctly, you can use the [Cloudflare Websocket Counter](/2025/cloudflare-websocket-counter) project. The private instance in this setup will automatically make HTTP requests to the websocket counter, demonstrating that it can reach the internet through the NAT instance.
 
-To troubleshoot the network interface name for the public instance user data script, you can use the `netstat -i` command.
+By default, the private instance will call the `https://websocket-counter.daniel-wohlgemuth.workers.dev/api/update?text=` URL every 3 seconds with the hostname of the instance appended to the URL.
 
+The URL and frequency are defined as parameters. You can override these parameters during deployment:
+
+```bash
+cd nat-instance
+cdk deploy --parameters WebsocketCounterUrl=https://your-custom-url.com/api/update?text= --parameters WebsocketCounterSleep=5
+cd ..
+```
 
 ## Resources
 - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html

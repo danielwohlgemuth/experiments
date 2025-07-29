@@ -6,6 +6,18 @@ export class NatInstanceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // CloudFormation parameters for URL and sleep time
+    const urlParam = new cdk.CfnParameter(this, 'WebsocketCounterUrl', {
+      type: 'String',
+      default: 'https://websocket-counter.daniel-wohlgemuth.workers.dev/api/update?text=',
+      description: 'The URL to call from the private instance script.'
+    });
+    const sleepParam = new cdk.CfnParameter(this, 'WebsocketCounterSleep', {
+      type: 'Number',
+      default: 3,
+      description: 'The sleep interval (in seconds) between calls.'
+    });
+
     // Create a VPC
     const vpc = new ec2.Vpc(this, 'VPC', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
@@ -294,18 +306,6 @@ export class NatInstanceStack extends cdk.Stack {
     //   ec2.Port.tcp(22),
     //   'Allow SSH to public NAT instance',
     // );
-
-    // CloudFormation parameters for URL and sleep time
-    const urlParam = new cdk.CfnParameter(this, 'WebsocketCounterUrl', {
-      type: 'String',
-      default: 'https://websocket-counter.daniel-wohlgemuth.workers.dev/api/update?text=',
-      description: 'The URL to call from the private instance script.'
-    });
-    const sleepParam = new cdk.CfnParameter(this, 'WebsocketCounterSleep', {
-      type: 'Number',
-      default: 3,
-      description: 'The sleep interval (in seconds) between calls.'
-    });
 
     // User data script for the private instance
     const privateInstanceUserData = ec2.UserData.forLinux();
