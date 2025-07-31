@@ -142,6 +142,24 @@ cdk deploy --parameters WebsocketCounterUrl=https://your-custom-url.com/api/upda
 cd ..
 ```
 
+### Reverse Proxy Setup
+
+Deploy the stack to AWS.
+
+```bash
+cd reverse-proxy
+cdk deploy
+cd ..
+```
+
+To verify that the reverse proxy is working correctly, you can access the private server through the proxy's public IP address. The proxy will forward requests to the private instance, allowing external access without exposing the private instance directly to the internet.
+
+Use the following command to get the proxy's public IP.
+
+```bash
+aws cloudformation describe-stacks --stack-name ReverseProxyStack --query "Stacks[0].Outputs[?OutputKey=='ReverseProxyPublicIP'].OutputValue" --output text
+```
+
 ## Resources
 - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html
 - https://docs.aws.amazon.com/vpc/latest/userguide/work-with-nat-instances.html
