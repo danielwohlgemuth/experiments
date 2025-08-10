@@ -233,6 +233,8 @@ export class ReverseProxyStack extends cdk.Stack {
     // User data script for the private server
     const privateServerUserData = ec2.UserData.forLinux();
     privateServerUserData.addCommands(
+      'mkdir /home/ec2-user/http-server',
+      'cd /home/ec2-user/http-server',
       'cat > index.html << EOF',
       '<!DOCTYPE html>',
       '<html lang="en">',
