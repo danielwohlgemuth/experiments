@@ -36,3 +36,6 @@ A real-time WebSocket counter app running on Cloudflare Workers, using Durable O
 ---
 
 For more details, see [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/).
+- https://developers.cloudflare.com/durable-objects/examples/build-a-counter/
+- https://developers.cloudflare.com/durable-objects/examples/websocket-server/
+- https://developers.cloudflare.com/durable-objects/examples/websocket-hibernation-server/

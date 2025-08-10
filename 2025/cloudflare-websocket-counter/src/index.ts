@@ -1,9 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
 
-interface UpdateMessage {
-	text: string;
-}
-
 interface WebSocketMessage {
 	type: 'update';
 	text: string;
@@ -12,19 +8,25 @@ interface WebSocketMessage {
 
 export class CounterObject extends DurableObject<Env> {
 	private websockets: Set<WebSocket>;
-	private currentText: string;
+	private text: string;
 	private counter: number;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 		this.websockets = new Set();
-		this.currentText = "";
+		this.text = "";
 		this.counter = 0;
 
 		this.ctx.blockConcurrencyWhile(async () => {
-			this.currentText = (await ctx.storage.get("currentText")) as string;
+			this.text = (await ctx.storage.get("text")) as string;
 			this.counter = (await ctx.storage.get("counter")) as number;
 		});
+
+		this.ctx.getWebSockets().forEach((server) => {
+			this.websockets.add(server);
+		});
+
+		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
 	}
 
 	async fetch(request: Request): Promise<Response> {
@@ -48,13 +50,13 @@ export class CounterObject extends DurableObject<Env> {
 		const [client, server] = Object.values(pair);
 
 		// Accept the WebSocket connection
-		server.accept();
+		this.ctx.acceptWebSocket(server);
 		this.websockets.add(server);
 
 		// Send current state to new connection
 		const message: WebSocketMessage = {
 			type: "update",
-			text: this.currentText,
+			text: this.text,
 			counter: this.counter
 		};
 		server.send(JSON.stringify(message));
@@ -88,8 +90,8 @@ export class CounterObject extends DurableObject<Env> {
 
 	private async updateCounter(text: string): Promise<void> {
 		// Reset counter if text changed, otherwise increment
-		if (text !== this.currentText) {
-			this.currentText = text;
+		if (text !== this.text) {
+			this.text = text;
 			this.counter = 1;
 		} else {
 			this.counter++;
@@ -97,7 +99,7 @@ export class CounterObject extends DurableObject<Env> {
 
 		// Persist state
 		await this.ctx.storage.put({
-			"currentText": this.currentText,
+			"text": this.text,
 			"counter": this.counter
 		});
 	}
@@ -106,7 +108,7 @@ export class CounterObject extends DurableObject<Env> {
 		// Broadcast to all connected WebSocket clients
 		const message: WebSocketMessage = {
 			type: "update",
-			text: this.currentText,
+			text: this.text,
 			counter: this.counter
 		};
 
