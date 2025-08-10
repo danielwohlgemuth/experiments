@@ -160,6 +160,18 @@ Use the following command to get the proxy's public IP.
 aws cloudformation describe-stacks --stack-name ReverseProxyStack --query "Stacks[0].Outputs[?OutputKey=='ReverseProxyPublicIP'].OutputValue" --output text
 ```
 
+### Simple Architecture Setup
+
+Deploy the stack to AWS.
+
+```bash
+cd simple-architecture
+cdk deploy
+cd ..
+```
+
+This stack combines all three previous approaches. One difference is that it uses the Apache HTTP Server as a reverse proxy instead of socat to allow routing requests to different private servers instead of just a single server.
+
 ## Resources
 - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html
 - https://docs.aws.amazon.com/vpc/latest/userguide/work-with-nat-instances.html
