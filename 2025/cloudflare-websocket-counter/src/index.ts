@@ -130,6 +130,14 @@ export class CounterObject extends DurableObject<Env> {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		const { pathname } = new URL(request.url)
+		if (!(pathname === '/api/ws' && request.headers.get("Upgrade") === "websocket")) {
+			const { success } = await env.RATE_LIMITER.limit({ key: '' });
+			if (!success) {
+			  return new Response(`429 Failure - rate limit`, { status: 429 })
+			}
+		}
+
 		// Get the Durable Object ID (using a fixed ID for single global counter)
 		const id = env.COUNTER_OBJECT.idFromName("global-counter");
 		const obj = env.COUNTER_OBJECT.get(id);

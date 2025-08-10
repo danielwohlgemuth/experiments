@@ -39,3 +39,4 @@ For more details, see [Cloudflare Workers documentation](https://developers.clou
 - https://developers.cloudflare.com/durable-objects/examples/build-a-counter/
 - https://developers.cloudflare.com/durable-objects/examples/websocket-server/
 - https://developers.cloudflare.com/durable-objects/examples/websocket-hibernation-server/
+- https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
