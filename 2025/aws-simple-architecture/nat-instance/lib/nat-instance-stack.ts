@@ -252,23 +252,11 @@ export class NatInstanceStack extends cdk.Stack {
       userData: userData,
     });
 
-    // Route table for private subnet to route internet traffic through NAT instance
-    const privateRouteTable = new ec2.CfnRouteTable(this, 'PrivateRouteTable', {
-      vpcId: vpc.vpcId,
-      tags: [{ key: 'Name', value: 'private-instance-rt' }],
-    });
-
     // Route 0.0.0.0/0 to the NAT instance
     new ec2.CfnRoute(this, 'PrivateSubnetDefaultRoute', {
-      routeTableId: privateRouteTable.ref,
+      routeTableId: vpc.isolatedSubnets[0].routeTable.routeTableId,
       destinationCidrBlock: '0.0.0.0/0',
       instanceId: publicNatInstance.instanceId,
-    });
-
-    // Associate the route table with the private (isolated) subnet
-    new ec2.CfnSubnetRouteTableAssociation(this, 'PrivateSubnetRouteTableAssociation', {
-      subnetId: vpc.isolatedSubnets[0].subnetId,
-      routeTableId: privateRouteTable.ref,
     });
 
     // Create a security group for the private instance
