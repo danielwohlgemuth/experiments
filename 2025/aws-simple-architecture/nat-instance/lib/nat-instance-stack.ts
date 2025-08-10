@@ -236,11 +236,6 @@ export class NatInstanceStack extends cdk.Stack {
       'sudo /sbin/iptables -F FORWARD',
       'sudo service iptables save'
     );
-    // Add router config to public instance user data to allow SSH forwarding
-    // userData.addCommands(
-    //   'echo "AllowTcpForwarding yes" | sudo tee -a /etc/ssh/sshd_config',
-    //   'sudo systemctl restart sshd'
-    // );
 
     // Create the public NAT instance
     const publicNatInstance = new ec2.Instance(this, 'PublicNatInstance', {
