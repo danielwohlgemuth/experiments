@@ -41,7 +41,7 @@ function animateCounter() {
 
 function connect() {
 	const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-	const ws = new WebSocket(protocol + '//' + window.location.host + '/api/ws');
+	const ws = new WebSocket(protocol + '//' + window.location.host + '/api/websocket');
 	
 	ws.onopen = function() {
 		statusElement.textContent = 'Connected - Updates in real-time';

@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 
 interface WebSocketMessage {
-	type: 'update';
+	type: "update";
 	text: string;
 	counter: number;
 }
@@ -26,7 +26,7 @@ export class CounterObject extends DurableObject<Env> {
 			this.websockets.add(server);
 		});
 
-		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
+		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"));
 	}
 
 	async fetch(request: Request): Promise<Response> {
@@ -129,19 +129,30 @@ export class CounterObject extends DurableObject<Env> {
 }
 
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		const { pathname } = new URL(request.url)
-		if (!(pathname === '/api/ws' && request.headers.get("Upgrade") === "websocket")) {
-			const { success } = await env.RATE_LIMITER.limit({ key: '' });
-			if (!success) {
-			  return new Response(`429 Failure - rate limit`, { status: 429 })
-			}
-		}
-
+	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {		
 		// Get the Durable Object ID (using a fixed ID for single global counter)
 		const id = env.COUNTER_OBJECT.idFromName("global-counter");
 		const obj = env.COUNTER_OBJECT.get(id);
-		return obj.fetch(request);
+
+		let url = new URL(request.url);
+		switch (url.pathname) {
+			case "/api/websocket": {
+				if (request.headers.get("Upgrade") !== "websocket") {
+					return new Response("Expected websocket", { status: 400 });
+				}
+				return obj.fetch(request);
+			}
+			case "/api/update": {
+				const { success } = await env.RATE_LIMITER.limit({ key: "" });
+				if (!success) {
+					return new Response(`Rate limit`, { status: 429 })
+				}
+				return obj.fetch(request);
+			}
+			default: {
+				return new Response("Not found", { status: 404 });
+			}
+		}
 	}
 } satisfies ExportedHandler<Env>;
 
