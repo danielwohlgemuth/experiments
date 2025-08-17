@@ -26,6 +26,11 @@ The main motivation for this project was to explore alternatives to the NAT Gate
 
 Summarizing the table, having a NAT Gateway would cost $32.85 per month, while having a self-managed NAT Instance would cost $12.118 (public IPv4 address + EC2 t2.micro instance), or almost a third of the cost of a NAT Gateway, assuming only light traffic. The drawback is that the NAT instance requires manual maintenance and is a single point of failure.
 
+### AWS Pricing Calculator
+
+- NAT Gateway [link 🔗](https://calculator.aws/#/estimate?id=36ab0344f39b23e5fd53c23a5a4841fe55ef7f2b) and [file 📄](/2025/aws-simple-architecture/assets/nat-gateway.json)
+- NAT Instance [link 🔗](https://calculator.aws/#/estimate?id=e1e41489e6ba0b4b5de08c47a359c18ad8a7e048) and [file 📄](/2025/aws-simple-architecture/assets/nat-instance.json)
+
 ## Concepts
 
 ### Bastion Host

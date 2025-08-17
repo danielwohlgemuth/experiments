@@ -1,0 +1,53 @@
+{
+	"Name": "NAT Instance",
+	"Total Cost": {
+		"monthly": "12.12",
+		"upfront": "0.00",
+		"12 months": "145.44"
+	},
+	"Metadata": {
+		"Currency": "USD",
+		"Locale": "en_US",
+		"Created On": "8/17/2025",
+		"Legal Disclaimer": "AWS Pricing Calculator provides only an estimate of your AWS fees and doesn't include any taxes that might apply. Your actual fees depend on a variety of factors, including your actual usage of AWS services.",
+		"Share Url": "https://calculator.aws/#/estimate?id=e1e41489e6ba0b4b5de08c47a359c18ad8a7e048"
+	},
+	"Groups": {
+		"Services": [
+			{
+				"Service Name": "Amazon EC2 ",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "8.47",
+					"upfront": "0.00",
+					"12 months": "101.62"
+				},
+				"Properties": {
+					"Tenancy": "Shared Instances",
+					"Operating system": "Linux",
+					"Workload": "Consistent, Number of instances: 1",
+					"Advance EC2 instance": "t2.micro",
+					"Pricing strategy": "On-Demand Utilization: 100 %Utilized/Month",
+					"Enable monitoring": "disabled",
+					"DT Inbound: Not selected": "0 TB per month",
+					"DT Outbound: Not selected": "0 TB per month",
+					"DT Intra-Region:": "0 TB per month"
+				}
+			},
+			{
+				"Service Name": "Public IPv4 Address",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "3.65",
+					"upfront": "0.00",
+					"12 months": "43.80"
+				},
+				"Properties": {
+					"Number of In-use public IPv4 addresses": "1"
+				}
+			}
+		]
+	}
+}

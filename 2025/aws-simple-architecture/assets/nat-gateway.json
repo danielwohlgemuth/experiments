@@ -1,0 +1,32 @@
+{
+	"Name": "NAT Gateway",
+	"Total Cost": {
+		"monthly": "32.85",
+		"upfront": "0.00",
+		"12 months": "394.20"
+	},
+	"Metadata": {
+		"Currency": "USD",
+		"Locale": "en_US",
+		"Created On": "8/17/2025",
+		"Legal Disclaimer": "AWS Pricing Calculator provides only an estimate of your AWS fees and doesn't include any taxes that might apply. Your actual fees depend on a variety of factors, including your actual usage of AWS services.",
+		"Share Url": "https://calculator.aws/#/estimate?id=36ab0344f39b23e5fd53c23a5a4841fe55ef7f2b"
+	},
+	"Groups": {
+		"Services": [
+			{
+				"Service Name": "Network Address Translation (NAT) Gateway",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "32.85",
+					"upfront": "0.00",
+					"12 months": "394.20"
+				},
+				"Properties": {
+					"Number of NAT Gateways": "1"
+				}
+			}
+		]
+	}
+}
