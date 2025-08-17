@@ -4,6 +4,8 @@ A real-time WebSocket counter app running on Cloudflare Workers, using Durable O
 
 ![WebSocket Counter Demo](./assets/websocket-counter.png)
 
+Here is a quick [Youtube video](https://youtu.be/C8hEw0Yos7E) showing how it works and how it is set up.
+
 ## Requirements
 
 - [Node.js](https://nodejs.org/)
