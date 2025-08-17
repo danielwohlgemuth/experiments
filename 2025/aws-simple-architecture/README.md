@@ -87,6 +87,8 @@ Create a key pair in EC2. You can use the [create-key-pair.sh](/2025/aws-simple-
 
 ### SSH Jump Host Setup
 
+If you want to see how to set it up manually, see this [YouTube video](https://youtu.be/WWoKltMSqt8).
+
 Deploy the stack to AWS.
 
 ```bash
