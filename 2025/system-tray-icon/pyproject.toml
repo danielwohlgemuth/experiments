@@ -1,0 +1,10 @@
+[project]
+name = "system-tray-icon"
+version = "0.1.0"
+description = "System Tray Icon Proof of Concept"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pillow==12.0.0",
+    "pystray==0.19.5",
+]
