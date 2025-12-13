@@ -1,0 +1,10 @@
+[project]
+name = "speech-to-text"
+version = "0.1.0"
+description = "Speech to Text"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openai-whisper==20250625",
+    "sounddevice==0.5.3",
+]
