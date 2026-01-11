@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scaling=1">
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 95vh;
+        }
+
+        #correct {
+            width: 12rem;
+            height: 4rem;
+            transform: rotate(-45deg) translate(1rem, 1rem);
+            border-radius: 4rem;
+            background-color: green;
+            margin: 6rem 2rem;
+            animation: cycle 5s ease-in-out infinite;
+        }
+
+        #correct:after {
+            content: "";
+            position: absolute;
+            width: 8rem;
+            height: 4rem;
+            transform: rotate(90deg);
+            bottom: 2rem;
+            left: -2rem;
+            border-radius: 4rem;
+            background-color: green;
+            animation: cycle-after 5s ease-in-out infinite;
+        }
+
+        @keyframes cycle {
+
+            25%,
+            75% {
+                background-color: orange;
+            }
+
+            50% {
+                transform: rotate(-225deg);
+                background-color: red;
+            }
+        }
+
+        @keyframes cycle-after {
+
+            25%,
+            75% {
+                background-color: orange;
+            }
+
+            50% {
+                width: 12rem;
+                bottom: 0;
+                left: 0;
+                background-color: red;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div id="correct"></div>
+    </div>
+</body>
+
+</html>

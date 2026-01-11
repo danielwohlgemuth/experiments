@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 95vh;
+        }
+
+        #heart {
+            width: 10rem;
+            height: 10rem;
+            background-color: red;
+            transform: rotate(45deg) translate(.5rem, .5rem);
+            margin: 5rem;
+            animation-name: cycle;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        #heart:before {
+            content: "";
+            width: 10rem;
+            height: 10rem;
+            border-radius: 50%;
+            position: absolute;
+            right: 5rem;
+            background-color: red;
+            animation-name: cycle-before;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        #heart:after {
+            content: "";
+            width: 10rem;
+            height: 10rem;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5rem;
+            background-color: red;
+            animation-name: cycle-after;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        @keyframes cycle {
+            50% {
+                transform: rotate(0);
+            }
+        }
+
+        @keyframes cycle-before {
+            50% {
+                right: 0;
+                border-radius: 0;
+            }
+        }
+
+        @keyframes cycle-after {
+            50% {
+                bottom: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div id="heart"></div>
+    </div>
+</body>
+
+</html>

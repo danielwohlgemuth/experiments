@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scaling=1">
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 95vh;
+        }
+
+        #correct {
+            width: 12rem;
+            height: 4rem;
+            transform: rotate(-45deg) translate(1rem, 1rem);
+            border-radius: 4rem;
+            background-color: green;
+            margin: 6rem 2rem;
+        }
+
+        #correct:after {
+            content: "";
+            position: absolute;
+            width: 8rem;
+            height: 4rem;
+            transform: rotate(90deg);
+            bottom: 2rem;
+            left: -2rem;
+            border-radius: 4rem;
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div id="correct"></div>
+    </div>
+</body>
+
+</html>
