@@ -29,16 +29,16 @@
                 case "square":
                     return `<rect width="150" height="150" x="25" y="25" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
                 case "triangle":
-                    return `<path d="M 100,25 L 175,175 L 25,175 Z" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
+                    return `<path d="M 100,45 L 175,175 L 25,175 Z" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
                 case "hexagon":
                     return `<path d="M 25,100 L 65,35 L 137.5,35 L 175,100 L 137.5,165 L 65,165 Z" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
                 default:
+                    console.error(`Unknown shape: ${shape}`);
                     return "";
             }
         }
 
         function createSvg(shape, color, filled, size, dashed) {
-            console.log(shape, color, filled, size);
             return `<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" style="background-color: white; transform: scale(${size});">${createShape(shape, color, filled, dashed)}</svg>`;
         }
 
