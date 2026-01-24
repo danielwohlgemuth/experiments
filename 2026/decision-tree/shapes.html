@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shapes</title>
+    <style>
+        #tree {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .leave {
+          overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="tree"></div>
+
+    <script>
+        const strokeWidth = "15";
+
+        function createShape(shape, color, filled, dashed) {
+            const fill = filled ? color : "none";
+            const dash = dashed ? `stroke-dasharray="15,10"` : "";
+
+            switch (shape) {
+                case "circle":
+                    return `<circle cx="100" cy="100" r="75" stroke="${color}" stroke-width="${strokeWidth}" ${dash} fill="${fill}" />`;
+                case "square":
+                    return `<rect width="150" height="150" x="25" y="25" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
+                case "triangle":
+                    return `<path d="M 100,25 L 175,175 L 25,175 Z" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
+                case "hexagon":
+                    return `<path d="M 25,100 L 65,35 L 137.5,35 L 175,100 L 137.5,165 L 65,165 Z" stroke="${color}" stroke-width="${strokeWidth}" ${dash} stroke-linejoin="round" fill="${fill}" />`;
+                default:
+                    return "";
+            }
+        }
+
+        function createSvg(shape, color, filled, size, dashed) {
+            console.log(shape, color, filled, size);
+            return `<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" style="background-color: white; transform: scale(${size});">${createShape(shape, color, filled, dashed)}</svg>`;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const shapes = ["circle", "square", "triangle", "hexagon"];
+            const colors = ["blue", "red", "green"];
+            const filled_values = [true, false];
+            const dashed_values = [false, true];
+
+            const treeDocument = document.getElementById("tree");
+      
+            for (let shape of shapes) {
+              for (let color of colors) {
+                for (let filled of filled_values) {
+                  for (let dashed of dashed_values) {
+                    const element = document.createElement("div");
+                    element.className = "leave";
+                    element.innerHTML = createSvg(shape, color, filled, 1, dashed);
+                    treeDocument.appendChild(element);
+                  }
+                }
+              }
+            }
+        });
+    </script>
+</body>
