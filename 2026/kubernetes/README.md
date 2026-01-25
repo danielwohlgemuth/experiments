@@ -55,4 +55,5 @@ kubectl cluster-info
 kubectl label --dry-run=server --overwrite ns --all pod-security.kubernetes.io/enforce=privileged
 kubectl label --dry-run=server --overwrite ns --all pod-security.kubernetes.io/enforce=baseline
 kubectl label --dry-run=server --overwrite ns --all pod-security.kubernetes.io/enforce=restricted
+kubectl label --overwrite ns example pod-security.kubernetes.io/warn=baseline pod-security.kubernetes.io/warn-version=latest
 
