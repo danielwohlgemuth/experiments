@@ -1,0 +1,23 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+	- role: control-plane
+	  kubeadmConfigPatches:
+		- |
+		  kind: ClusterConfiguration
+		  apiServer:
+			extraArgs:
+				admission-control-config-file: /etc/config/cluster-level-pss.yml
+			extraVolumes:
+				- name: accf
+				  hostPath: /etc/config
+				  mountPath: /etc/config
+				  readOnly: false
+				  pathType: DirectoryOrCreate
+	  extraMounts:
+		- hostPath: /tmp/pss
+		  containerPath: /etc/config
+		  readOnly: false
+		  selinuxRelabel: false
+		  propagation: None
+
