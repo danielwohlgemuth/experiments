@@ -19,6 +19,8 @@ kubectl get services | svc
 kubectl get services -l <label>
 kubectl get replicasets | rs
 kubectl get nodes
+kubectl get --raw /metrics
+kubectl get --raw /api/v1/nodes/<node-name>/proxy/metrics
 
 kubectl delete service <service-name>
 kubectl delete service -l <label>
@@ -46,3 +48,4 @@ kubectl create configmap <configmap-name> --from-literal=<key>=<value>
 kubectl apply -f <file-path>
 
 kubectl edit <object>
+
