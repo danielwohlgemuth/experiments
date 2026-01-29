@@ -12,7 +12,7 @@ minikube addons enable <addon-name>
 
 kubectl get deployments | deploy
 kubectl get pods | po
-kubectl get pods -l <label> -o wide --selector=<selector>
+kubectl get pods -l <label> -o wide --selector=<selector> --watch
 kubectl get events
 kubectl logs <pod-name> --follow
 kubectl get services | svc
@@ -22,10 +22,12 @@ kubectl get nodes
 kubectl get --raw /metrics
 kubectl get --raw /api/v1/nodes/<node-name>/proxy/metrics
 kubectl get namespaces | ns
+kubectl get statefulsets | sts
 
 kubectl delete service <service-name>
 kubectl delete service -l <label>
 kubectl delete deployment <deployment-name>
+kubectl delete statefulset <statefulset-name> --cascade=orphan
 
 kubectl proxy
 
@@ -35,6 +37,7 @@ kubectl exec -ti <pod-name> -- bash
 kubectl label pods <pod-name> <label-key>=<label-value>
 
 kubectl scale <deployment-name> --replicas=<replicas-number>
+kubectl scale <statefulset-name> --replicas=<replicas-number>
 
 kubectl describe <object>
 
@@ -58,3 +61,9 @@ kubectl label --dry-run=server --overwrite ns --all pod-security.kubernetes.io/e
 kubectl label --overwrite ns example pod-security.kubernetes.io/warn=baseline pod-security.kubernetes.io/warn-version=latest
 
 kubectl port-forward services/<service-name> <external-port>:<service-port>
+
+kubectl run <name> -it --image=<image-name> --rm -- bash
+
+kubectl patch sts web -p '{"spec":{"replicas":3}}'
+kubectl patch sts web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":3}}}}'
+
