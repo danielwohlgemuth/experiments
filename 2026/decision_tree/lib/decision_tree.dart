@@ -67,35 +67,108 @@ class Decision {
   }
 }
 
-class DecisionTree extends StatelessWidget {
+class DecisionTree extends StatefulWidget {
   const DecisionTree({super.key});
 
+  @override
+  State<DecisionTree> createState() => _DecisionTreeState();
+}
+
+class _DecisionTreeState extends State<DecisionTree> {
   final List<String> shapes = const ['circle', 'square', 'triangle', 'hexagon'];
   final List<String> colors = const ['red', 'green', 'blue'];
   final List<String> filledValues = const ['true', 'false'];
   final List<String> dashedValues = const ['true', 'false'];
 
+  Map<String, bool?> selections = {};
+  List<Decision> allDecisions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _generateDecisions();
+  }
+
+  void _generateDecisions() {
+    allDecisions = [
+      ...Decision.generateShapeDecisions(shapes),
+      ...Decision.generateColorDecisions(colors),
+      ...Decision.generateFilledDecisions(),
+      ...Decision.generateDashedDecisions(),
+    ];
+  }
+
+  void _reset() {
+    setState(() {
+      selections.clear();
+      _generateDecisions();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
-    for (final decision in Decision.generateShapeDecisions(shapes)) {
-      widgets.add(Text(decision.getQuestion()));
-    }
-    for (final decision in Decision.generateColorDecisions(colors)) {
-      widgets.add(Text(decision.getQuestion()));
-    }
-    for (final decision in Decision.generateFilledDecisions()) {
-      widgets.add(Text(decision.getQuestion()));
-    }
-    for (final decision in Decision.generateDashedDecisions()) {
-      widgets.add(Text(decision.getQuestion()));
-    }
+    List<Decision> visibleDecisions = allDecisions;
 
+    List<Item> items = [];
     for (final shape in shapes) {
       for (final color in colors) {
-        widgets.add(Text('shape:$shape,color:$color'));
+        for (final filled in filledValues) {
+          for (final dashed in dashedValues) {
+            items.add(
+              Item('shape:$shape,color:$color,filled:$filled,dashed:$dashed'),
+            );
+          }
+        }
       }
     }
-    return Column(children: widgets);
+
+    List<Item> filteredItems = items.where((item) {
+      for (final entry in selections.entries) {
+        if (entry.value != null) {
+          if (!item.filter(entry.key, entry.value!)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }).toList();
+
+    return Column(
+      children: [
+        ElevatedButton(onPressed: _reset, child: const Text('Reset')),
+        const SizedBox(height: 16),
+        ...visibleDecisions.map((decision) => _buildDecisionWidget(decision)),
+        const Divider(),
+        const Text('Results', style: TextStyle(fontWeight: FontWeight.bold)),
+        ...filteredItems.map((item) => Text(item.keys)),
+      ],
+    );
+  }
+
+  Widget _buildDecisionWidget(Decision decision) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Expanded(child: Text(decision.getQuestion())),
+          RadioGroup<bool>(
+            groupValue: selections[decision.getKey()],
+            onChanged: (value) {
+              setState(() {
+                selections[decision.getKey()] = value;
+              });
+            },
+            child: Row(
+              children: [
+                Radio<bool>(value: true),
+                const Text('Yes'),
+                Radio<bool>(value: false),
+                const Text('No'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
