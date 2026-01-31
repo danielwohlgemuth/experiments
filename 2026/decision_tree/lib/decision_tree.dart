@@ -43,9 +43,7 @@ class Decision {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Decision &&
-           other.question == question &&
-           other.key == key;
+    return other is Decision && other.question == question && other.key == key;
   }
 
   @override
@@ -159,32 +157,51 @@ class _DecisionTreeState extends State<DecisionTree> {
     root = _buildDecisionTree(items, <String>{}, <Decision>{});
   }
 
-  TreeNode _buildDecisionTree(List<Item> items, Set<String> usedDecisionTypes, Set<Decision> usedDecisions) {
-    if (items.length <= 1) return TreeNode(items: items, usedDecisionTypes: usedDecisionTypes, usedDecisions: usedDecisions);
+  TreeNode _buildDecisionTree(
+    List<Item> items,
+    Set<String> usedDecisionTypes,
+    Set<Decision> usedDecisions,
+  ) {
+    if (items.length <= 1) {
+      return TreeNode(
+        items: items,
+        usedDecisionTypes: usedDecisionTypes,
+        usedDecisions: usedDecisions,
+      );
+    }
 
     List<Decision> availableDecisions = allDecisions
         .where((d) => !usedDecisionTypes.contains(d.getDecisionType()))
         .where((d) => !usedDecisions.contains(d))
         .toList();
 
-    if (availableDecisions.isEmpty) return TreeNode(items: items, usedDecisionTypes: usedDecisionTypes, usedDecisions: usedDecisions);
+    if (availableDecisions.isEmpty) {
+      return TreeNode(
+        items: items,
+        usedDecisionTypes: usedDecisionTypes,
+        usedDecisions: usedDecisions,
+      );
+    }
 
     Decision bestDecision = _findBestDecision(items, availableDecisions);
 
-    List<Item> yesItems = items.where((item) =>
-        item.filter(bestDecision.getKey(), true)).toList();
-    List<Item> noItems = items.where((item) =>
-        item.filter(bestDecision.getKey(), false)).toList();
+    List<Item> yesItems = items
+        .where((item) => item.filter(bestDecision.getKey(), true))
+        .toList();
+    List<Item> noItems = items
+        .where((item) => item.filter(bestDecision.getKey(), false))
+        .toList();
 
     TreeNode yesChild = _buildDecisionTree(
-        yesItems,
-        {...usedDecisionTypes, bestDecision.getDecisionType()},
-        {...usedDecisions, bestDecision});
+      yesItems,
+      {...usedDecisionTypes, bestDecision.getDecisionType()},
+      {...usedDecisions, bestDecision},
+    );
 
-    TreeNode noChild = _buildDecisionTree(
-        noItems,
-        usedDecisionTypes,
-        {...usedDecisions, bestDecision});
+    TreeNode noChild = _buildDecisionTree(noItems, usedDecisionTypes, {
+      ...usedDecisions,
+      bestDecision,
+    });
 
     return TreeNode(
       decision: bestDecision,
@@ -196,7 +213,10 @@ class _DecisionTreeState extends State<DecisionTree> {
     );
   }
 
-  Decision _findBestDecision(List<Item> items, List<Decision> availableDecisions) {
+  Decision _findBestDecision(
+    List<Item> items,
+    List<Decision> availableDecisions,
+  ) {
     if (availableDecisions.isEmpty) {
       throw Exception('No available decisions');
     }
@@ -216,10 +236,12 @@ class _DecisionTreeState extends State<DecisionTree> {
   }
 
   double _calculateDecisionScore(List<Item> items, Decision decision) {
-    List<Item> yesItems = items.where((item) =>
-        item.filter(decision.getKey(), true)).toList();
-    List<Item> noItems = items.where((item) =>
-        item.filter(decision.getKey(), false)).toList();
+    List<Item> yesItems = items
+        .where((item) => item.filter(decision.getKey(), true))
+        .toList();
+    List<Item> noItems = items
+        .where((item) => item.filter(decision.getKey(), false))
+        .toList();
 
     int yesCount = yesItems.length;
     int noCount = noItems.length;
@@ -227,8 +249,10 @@ class _DecisionTreeState extends State<DecisionTree> {
 
     if (yesCount == 0 || noCount == 0) return 0.0;
 
-    double yesEntropy = - (yesCount / totalCount) * log(yesCount / totalCount) / log(2);
-    double noEntropy = - (noCount / totalCount) * log(noCount / totalCount) / log(2);
+    double yesEntropy =
+        -(yesCount / totalCount) * log(yesCount / totalCount) / log(2);
+    double noEntropy =
+        -(noCount / totalCount) * log(noCount / totalCount) / log(2);
 
     return 1.0 - (yesEntropy + noEntropy);
   }
@@ -250,11 +274,7 @@ class _DecisionTreeState extends State<DecisionTree> {
       children: [
         ElevatedButton(onPressed: _reset, child: const Text('Reset')),
         const SizedBox(height: 16),
-        Expanded(
-          child: SingleChildScrollView(
-            child: _buildTreeWidget(root!),
-          ),
-        ),
+        Expanded(child: SingleChildScrollView(child: _buildTreeWidget(root!))),
       ],
     );
   }
@@ -269,61 +289,127 @@ class _DecisionTreeState extends State<DecisionTree> {
             if (node.items.isEmpty)
               const Text('No items match', style: TextStyle(color: Colors.red))
             else
-              ...node.items.map((item) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Text(
-                  item.keys,
-                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+              Container(
+                width: 200,
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
-              )),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: node.items
+                      .map(
+                        (item) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: item.keys
+                              .split(',')
+                              .map(
+                                (attribute) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 1.0,
+                                  ),
+                                  child: Text(
+                                    attribute.trim(),
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
           ],
         ),
       );
     }
 
-    return Padding(
-      padding: EdgeInsets.only(left: depth * 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              border: Border.all(color: Colors.blue.shade200),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Text(
-              node.decision!.getQuestion(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (node.yesChild != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                color: Colors.green.shade100,
-                borderRadius: BorderRadius.circular(4.0),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: EdgeInsets.only(left: depth * 20.0),
+        child: Column(
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  border: Border.all(color: Colors.blue.shade200),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(
+                  node.decision!.getQuestion(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
-              child: const Text('Yes', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
             ),
-            _buildTreeWidget(node.yesChild!, depth: depth + 1),
-          ],
-          if (node.noChild != null) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                color: Colors.red.shade100,
-                borderRadius: BorderRadius.circular(4.0),
+            const SizedBox(height: 16),
+            if (node.yesChild != null || node.noChild != null)
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (node.yesChild != null)
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 4.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade100,
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            child: const Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _buildTreeWidget(node.yesChild!, depth: depth + 1),
+                        ],
+                      ),
+                    if (node.yesChild != null && node.noChild != null)
+                      const SizedBox(width: 16),
+                    if (node.noChild != null)
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 4.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            child: const Text(
+                              'No',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _buildTreeWidget(node.noChild!, depth: depth + 1),
+                        ],
+                      ),
+                  ],
+                ),
               ),
-              child: const Text('No', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-            ),
-            _buildTreeWidget(node.noChild!, depth: depth + 1),
+            const SizedBox(height: 16),
           ],
-          const SizedBox(height: 16),
-        ],
+        ),
       ),
     );
   }
