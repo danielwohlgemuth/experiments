@@ -1,16 +1,28 @@
-# decision_tree
+# Decision Tree
 
-A new Flutter project.
+This project implements a decision tree algorithm. A decision tree is a tree-like data structure that helps finding specific information by making successive decisions. Each decision narrows down the remaining options.
 
-## Getting Started
+This project was inspired by the game called [Akinator](https://en.wikipedia.org/wiki/Akinator) played through Alexa. In the game, a player thinks of a character, object, or animal, and Alexa asks a series of yes/no questions until it's confident enough to guess the character. This project uses shapes instead of characters or animals.
 
-This project is a starting point for a Flutter application.
+The following options are used to generate the shapes:
+- **Shapes**: circle, square, triangle, hexagon
+- **Colors**: red, green, blue
+- **Filled**: yes, no
+- **Dashed border**: yes, no
 
-A few resources to get you started if this is your first Flutter project:
+![decision tree](assets/decision-tree.drawio.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+[Decision Tree diagram file](https://app.diagrams.net/?title=decision-tree#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2026%2Fdecision_tree%2Fassets%2Fdecision-tree.drawio)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Prerequisite
+- [Flutter](https://docs.flutter.dev/install/quick)
+
+## Usage
+
+Run the following script in the terminal.
+
+```bash
+./scripts/run.sh
+```
+
+Open [http://localhost:8000] in a browser.
