@@ -30,3 +30,8 @@ https://huggingface.co/learn/llm-course/chapter1/1
 - **Encoder-only models**: These models use a bidirectional approach to understand context from both directions. Also called auto-encoding models. They're best suited for tasks that require deep understanding of text, such as classification, named entity recognition, and question answering. Examples: BERT, DistilBERT, ModernBERT.
 - **Decoder-only models**: These models process text from left to right and are particularly good at text generation tasks. Also called auto-regressive models. They can complete sentences, write essays, or even generate code based on a prompt. Examples: GPT, Llama, Gemma.
 - **Encoder-decoder models**: These models combine both approaches, using an encoder to understand the input and a decoder to generate output. Also called sequence-to-sequence models. They excel at sequence-to-sequence tasks like translation, summarization, and question answering. Examples: T5, BART.
+
+## Modern LLM Training Phases
+
+1. **Pretraining**: The model learns to predict the next token on vast amounts of text data.
+2. **Instruction tunning**: The model is fine-tuned to follow instructions and generate helpful responses.
