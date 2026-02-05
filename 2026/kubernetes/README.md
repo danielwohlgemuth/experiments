@@ -15,6 +15,7 @@ kubectl get pods | po
 kubectl get pods -l <label> -o wide --selector=<selector> --watch
 kubectl get events
 kubectl logs <pod-name> --follow
+kubectl get secrets
 kubectl get services | svc
 kubectl get services -l <label>
 kubectl get replicasets | rs
@@ -50,6 +51,7 @@ kubectl rollout undo <deployment-name>
 kubectl create configmap <configmap-name> --from-literal=<key>=<value>
 
 kubectl apply -f <file-path>
+kubectl apply -k <file-path>
 
 kubectl edit <object>
 
