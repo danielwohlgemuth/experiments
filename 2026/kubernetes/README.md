@@ -16,6 +16,7 @@ kubectl get pods -l <label> -o wide --selector=<selector> --watch
 kubectl get events
 kubectl logs <pod-name> --follow
 kubectl get secrets
+kubectl get secret <secret-name> -o jsonpath="{.data.<secret-name>}" | base64 -d
 kubectl get services | svc
 kubectl get services -l <label>
 kubectl get replicasets | rs
