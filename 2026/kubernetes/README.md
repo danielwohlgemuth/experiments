@@ -5,6 +5,7 @@ When in doubt, use kubectl describe to see how Kubernetes has interpreted the re
 
 
 minikube start
+minikube start --memory 5120 --cpus 4
 minikube dashboard
 minikube service <service-name>
 minikube addons list
