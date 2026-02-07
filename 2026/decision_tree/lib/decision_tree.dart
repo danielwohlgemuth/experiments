@@ -335,6 +335,11 @@ class _DecisionTreeState extends State<DecisionTree> {
       return _buildLeafNodeWidget(node);
     }
 
+    int leftYesLeafs = _calculateSubtreeHeight(node.yesChild?.yesChild);
+    int leftNoLeafs = _calculateSubtreeHeight(node.yesChild?.noChild);
+    int rightYesLeafs = _calculateSubtreeHeight(node.noChild?.yesChild);
+    int rightNoLeafs = _calculateSubtreeHeight(node.noChild?.noChild);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
@@ -350,8 +355,12 @@ class _DecisionTreeState extends State<DecisionTree> {
                         children: [
                           Row(
                             children: [
-                              Expanded(child: Container()),
                               Expanded(
+                                flex: leftYesLeafs,
+                                child: Container(),
+                              ),
+                              Expanded(
+                                flex: leftNoLeafs,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0,
@@ -365,10 +374,10 @@ class _DecisionTreeState extends State<DecisionTree> {
                                       ),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Yes',
                                     textAlign: TextAlign.right,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -383,6 +392,7 @@ class _DecisionTreeState extends State<DecisionTree> {
                   Align(
                     alignment: Alignment.topCenter,
                     child: Container(
+                      width: 200,
                       padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: Colors.blue.shade50,
@@ -392,6 +402,7 @@ class _DecisionTreeState extends State<DecisionTree> {
                       child: Text(
                         node.decision!.getQuestion(),
                         style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -403,6 +414,7 @@ class _DecisionTreeState extends State<DecisionTree> {
                           Row(
                             children: [
                               Expanded(
+                                flex: rightYesLeafs,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0,
@@ -416,15 +428,18 @@ class _DecisionTreeState extends State<DecisionTree> {
                                       ),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'No',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
-                              Expanded(child: Container()),
+                              Expanded(
+                                flex: rightNoLeafs,
+                                child: Container(),
+                              ),
                             ],
                           ),
                           _buildTreeWidget(node.noChild!),
@@ -438,5 +453,17 @@ class _DecisionTreeState extends State<DecisionTree> {
         ],
       ),
     );
+  }
+
+  int _calculateSubtreeHeight(TreeNode? node) {
+    if (node == null) return 1;
+
+    if (node.decision == null) {
+      return 1;
+    }
+
+    int yesHeight = _calculateSubtreeHeight(node.yesChild);
+    int noHeight = _calculateSubtreeHeight(node.noChild);
+    return yesHeight + noHeight;
   }
 }
