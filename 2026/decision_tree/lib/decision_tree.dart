@@ -264,6 +264,56 @@ class _DecisionTreeState extends State<DecisionTree> {
     });
   }
 
+  Widget _buildLeafNodeWidget(TreeNode node, int depth) {
+    return Padding(
+      padding: EdgeInsets.only(left: depth * 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (node.items.isEmpty)
+            const Text('No items match', style: TextStyle(color: Colors.red))
+          else
+            Container(
+              width: 200,
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: node.items
+                    .map(
+                      (item) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: item.keys
+                            .split(',')
+                            .map(
+                              (attribute) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 1.0,
+                                ),
+                                child: Text(
+                                  attribute.trim(),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (root == null) {
@@ -281,53 +331,7 @@ class _DecisionTreeState extends State<DecisionTree> {
 
   Widget _buildTreeWidget(TreeNode node, {int depth = 0}) {
     if (node.decision == null) {
-      return Padding(
-        padding: EdgeInsets.only(left: depth * 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (node.items.isEmpty)
-              const Text('No items match', style: TextStyle(color: Colors.red))
-            else
-              Container(
-                width: 200,
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: node.items
-                      .map(
-                        (item) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: item.keys
-                              .split(',')
-                              .map(
-                                (attribute) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 1.0,
-                                  ),
-                                  child: Text(
-                                    attribute.trim(),
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-          ],
-        ),
-      );
+      return _buildLeafNodeWidget(node, depth);
     }
 
     return SingleChildScrollView(
