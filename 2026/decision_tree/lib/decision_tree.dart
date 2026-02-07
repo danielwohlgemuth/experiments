@@ -265,7 +265,7 @@ class _DecisionTreeState extends State<DecisionTree> {
     });
   }
 
-  Widget _buildLeafNodeWidget(TreeNode node, int depth) {
+  Widget _buildLeafNodeWidget(TreeNode node) {
     return Padding(
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
       child: Column(
@@ -330,78 +330,106 @@ class _DecisionTreeState extends State<DecisionTree> {
     );
   }
 
-  Widget _buildTreeWidget(TreeNode node, {int depth = 0}) {
+  Widget _buildTreeWidget(TreeNode node) {
     if (node.decision == null) {
-      return _buildLeafNodeWidget(node, depth);
+      return _buildLeafNodeWidget(node);
     }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
         children: [
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Text(
-                node.decision!.getQuestion(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
           if (node.yesChild != null || node.noChild != null)
             IntrinsicHeight(
               child: Row(
                 children: [
                   if (node.yesChild != null)
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
+                    IntrinsicWidth(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: Container()),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                    vertical: 4.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.green.shade500,
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Yes',
+                                    textAlign: TextAlign.right,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade100,
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: Text(
-                            'Yes',
-                            style: TextStyle(
-                              color: Colors.green.shade900,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        _buildTreeWidget(node.yesChild!, depth: depth + 1),
-                      ],
+                          _buildTreeWidget(node.yesChild!),
+                        ],
+                      ),
                     ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        border: Border.all(color: Colors.blue.shade200),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        node.decision!.getQuestion(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
                   if (node.noChild != null)
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
+                    IntrinsicWidth(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                    vertical: 4.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.red.shade500,
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'No',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                            ],
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: Text(
-                            'No',
-                            style: TextStyle(
-                              color: Colors.red.shade900,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        _buildTreeWidget(node.noChild!, depth: depth + 1),
-                      ],
+                          _buildTreeWidget(node.noChild!),
+                        ],
+                      ),
                     ),
                 ],
               ),
