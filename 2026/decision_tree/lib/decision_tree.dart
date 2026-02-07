@@ -266,7 +266,7 @@ class _DecisionTreeState extends State<DecisionTree> {
 
   Widget _buildLeafNodeWidget(TreeNode node, int depth) {
     return Padding(
-      padding: EdgeInsets.only(left: depth * 20.0),
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -336,84 +336,77 @@ class _DecisionTreeState extends State<DecisionTree> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: EdgeInsets.only(left: depth * 20.0),
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  border: Border.all(color: Colors.blue.shade200),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  node.decision!.getQuestion(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                border: Border.all(color: Colors.blue.shade200),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                node.decision!.getQuestion(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 16),
-            if (node.yesChild != null || node.noChild != null)
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (node.yesChild != null)
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 4.0,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade100,
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: const Text(
-                              'Yes',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
+          ),
+          if (node.yesChild != null || node.noChild != null)
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  if (node.yesChild != null)
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 4.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade100,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: Text(
+                            'Yes',
+                            style: TextStyle(
+                              color: Colors.green.shade900,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          _buildTreeWidget(node.yesChild!, depth: depth + 1),
-                        ],
-                      ),
-                    if (node.yesChild != null && node.noChild != null)
-                      const SizedBox(width: 16),
-                    if (node.noChild != null)
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 4.0,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade100,
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: const Text(
-                              'No',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        ),
+                        _buildTreeWidget(node.yesChild!, depth: depth + 1),
+                      ],
+                    ),
+                  if (node.noChild != null)
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 4.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: Text(
+                            'No',
+                            style: TextStyle(
+                              color: Colors.red.shade900,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          _buildTreeWidget(node.noChild!, depth: depth + 1),
-                        ],
-                      ),
-                  ],
-                ),
+                        ),
+                        _buildTreeWidget(node.noChild!, depth: depth + 1),
+                      ],
+                    ),
+                ],
               ),
-            const SizedBox(height: 16),
-          ],
-        ),
+            ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
