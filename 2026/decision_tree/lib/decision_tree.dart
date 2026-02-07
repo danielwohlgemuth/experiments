@@ -138,6 +138,7 @@ class _DecisionTreeState extends State<DecisionTree> {
       ...Decision.generateFilledDecisions(),
       ...Decision.generateDashedDecisions(),
     ];
+    allDecisions.shuffle(Random());
   }
 
   void _buildTree() {
