@@ -1,2 +1,5 @@
 pretrained_model/
 pretrained_tokenizer/
+llama.cpp/
+venv/
+text-generation-inference/

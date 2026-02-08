@@ -35,3 +35,15 @@ https://huggingface.co/learn/llm-course/chapter1/1
 
 1. **Pretraining**: The model learns to predict the next token on vast amounts of text data.
 2. **Instruction tunning**: The model is fine-tuned to follow instructions and generate helpful responses.
+
+## Token Selection Parameters:
+- **Raw Logits**: The initial output probabilities for each token.
+- **Temperature**: Controls randomness in selection (higher = more creative).
+- **Top-p (Nucleus) Sampling**: Filters to top tokens making up X% of probability mass.
+- **Top-k Filtering**: Limits selection to top k most likely tokens.
+- **Presence Penalty**: Fixed penalty for repeated tokens.
+- **Frequency Penalty**: Cumulative penalty for repeated tokens.
+- **Repetition Penalty**: Multiplicative penalty for repeated tokens.
+- **Maximum Tokens**: Maximum number of tokens to generate.
+- **Minimum Tokens**: Minimum number of tokens to generate.
+- **Stop Sequences**: Sequences of tokens to stop generation.
