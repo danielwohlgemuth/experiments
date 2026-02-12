@@ -71,3 +71,5 @@ kubectl run <name> -it --image=<image-name> --rm -- bash
 kubectl patch sts web -p '{"spec":{"replicas":3}}'
 kubectl patch sts web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":3}}}}'
 
+kubectl kustomize
+
