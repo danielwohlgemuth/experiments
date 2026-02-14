@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg18-trixie
+    container_name: postgres-for-everything-pgvector
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
+    name: postgres-for-everything-data-pgvector

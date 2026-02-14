@@ -8,7 +8,8 @@ Postges is a versatile database and in this project explored some of its feature
 ## Start Postgres
 
 ```bash
-./start-docker.sh
+./start-postgres.sh
+./start-postgres-pgvector.sh
 ```
 
 ## Relational
@@ -49,7 +50,7 @@ FROM post
 JOIN "user" ON post.user_id = "user".user_id;
 ```
 ```
-               Post ID                |               User ID                
+               Post ID                |               User ID
 --------------------------------------+--------------------------------------
  d632eb7d-5564-44b1-b5fc-b80bd6e6dc5d | 8d031fde-7018-42a0-b0d6-b7e190380ddf
 (1 row)
@@ -83,7 +84,7 @@ FROM generate_series(1, 5);
 SELECT state FROM zipcode_state WHERE zipcode = '00001';
 ```
 ```
-  state  
+  state
 ---------
  State 5
 (1 row)
@@ -116,7 +117,7 @@ INSERT INTO product (product_details) VALUES
 SELECT * FROM product WHERE product_details @> '{"brand": "TechBrand"}';
 ```
 ```
-              product_id              |                                                                        product_details                                                                        
+              product_id              |                                                                        product_details
 --------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------
  3e160eea-8630-4bbe-bc60-45e54cf24559 | {"name": "Laptop Pro 15", "brand": "TechBrand", "price": 1500, "specs": {"ram": "16GB", "storage": "512GB SSD"}, "category": "Electronics", "in_stock": true}
  9129e83c-1380-4ccb-92d4-5ad6f4c6ae2f | {"name": "Wireless Mouse", "brand": "TechBrand", "color": "Black", "price": 30, "category": "Electronics", "in_stock": true}
@@ -128,7 +129,7 @@ SELECT * FROM product WHERE product_details @> '{"brand": "TechBrand"}';
 SELECT product_details['name'] AS "Name", product_details -> 'color' AS "Color" FROM product WHERE product_details ? 'color';
 ```
 ```
-       Name       |  Color  
+       Name       |  Color
 ------------------+---------
  "Wireless Mouse" | "Black"
  "Desk Lamp"      | "White"
@@ -138,6 +139,95 @@ SELECT product_details['name'] AS "Name", product_details -> 'color' AS "Color" 
 ## Vector Embedding
 
 https://github.com/pgvector/pgvector
+
+```sql
+CREATE EXTENSION vector;
+CREATE TABLE document (
+    id BIGSERIAL PRIMARY KEY,
+    embedding VECTOR(3),
+    content TEXT NOT NULL
+);
+CREATE TABLE document_binary (
+    id BIGSERIAL PRIMARY KEY,
+    embedding BIT(3),
+    content TEXT NOT NULL
+);
+
+INSERT INTO document (embedding, content) VALUES ('[1,1,0]', 'Plane'), ('[0,1,1]', 'Car'), ('[0,1,0]', 'Boat'), ('[0,0,1]', 'Submarine');
+INSERT INTO document_binary (embedding, content) VALUES ('110', 'Plane'), ('011', 'Car'), ('010', 'Boat'), ('001', 'Submarine');
+```
+
+```sql
+-- Comparison of metrics using vector [1,0,0]
+SELECT id, content, embedding,
+    embedding <-> '[1,0,0]' AS "L2 distance ([1,0,0])",
+    embedding <#> '[1,0,0]' AS "Negative inner product ([1,0,0])",
+    embedding <=> '[1,0,0]' AS "Cosine distance ([1,0,0])",
+    embedding <+> '[1,0,0]' AS "L1 distance ([1,0,0])"
+FROM document;
+```
+```
+ id |  content  | embedding | L2 distance ([1,0,0]) | Negative inner product ([1,0,0]) | Cosine distance ([1,0,0]) | L1 distance ([1,0,0])
+----+-----------+-----------+-----------------------+----------------------------------+---------------------------+-----------------------
+  1 | Plane     | [1,1,0]   |                     1 |                               -1 |       0.29289321881345254 |                     1
+  2 | Car       | [0,1,1]   |    1.7320508075688772 |                               -0 |                         1 |                     3
+  3 | Boat      | [0,1,0]   |    1.4142135623730951 |                               -0 |                         1 |                     2
+  4 | Submarine | [0,0,1]   |    1.4142135623730951 |                               -0 |                         1 |                     2
+(4 rows)
+```
+
+```sql
+-- Sort the documents based on the L2 distance between the embedding and the vector [1,0,0]
+SELECT id, content, embedding, embedding <-> '[1,0,0]' AS "L2 distance ([1,0,0])"
+FROM document
+WHERE embedding <-> '[1,0,0]' < 5
+ORDER BY embedding <-> '[1,0,0]'
+LIMIT 5;
+```
+```
+ id |  content  | embedding | L2 distance ([1,0,0])
+----+-----------+-----------+-----------------------
+  1 | Plane     | [1,1,0]   |                     1
+  3 | Boat      | [0,1,0]   |    1.4142135623730951
+  4 | Submarine | [0,0,1]   |    1.4142135623730951
+  2 | Car       | [0,1,1]   |    1.7320508075688772
+(4 rows)
+```
+
+```sql
+-- Comparison of metrics using binary vector 100
+SELECT id, content, embedding,
+    embedding <~> '100' AS "Hamming distance (100)",
+    embedding <%> '100' AS "Jaccard distance (100)"
+FROM document_binary;
+```
+```
+ id |  content  | embedding | Hamming distance (100) | Jaccard distance (100)
+----+-----------+-----------+------------------------+------------------------
+  1 | Plane     | 110       |                      1 |                    0.5
+  2 | Car       | 011       |                      3 |                      1
+  3 | Boat      | 010       |                      2 |                      1
+  4 | Submarine | 001       |                      2 |                      1
+(4 rows)
+```
+
+```sql
+-- Sort the documents based on the Jaccard distance between the embedding and the binary vector 100
+SELECT id, content, embedding, embedding <~> '100' AS "Jaccard distance (100)"
+FROM document_binary
+WHERE embedding <~> '100' < 5
+ORDER BY embedding <~> '100'
+LIMIT 5;
+```
+```
+ id |  content  | embedding | Jaccard distance (100)
+----+-----------+-----------+------------------------
+  1 | Plane     | 110       |                      1
+  3 | Boat      | 010       |                      2
+  4 | Submarine | 001       |                      2
+  2 | Car       | 011       |                      3
+(4 rows)
+```
 
 ## GIS
 
@@ -154,4 +244,6 @@ https://github.com/timescale/timescaledb
 ## Stop Postgres
 
 ```bash
-./stop-docker.sh
+./stop-postgres.sh
+./stop-postgres-pgvector.sh
+```
