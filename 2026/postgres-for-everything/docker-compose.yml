@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:18.1-alpine3.23
+    container_name: postgres-for-everything
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
+    name: postgres-for-everything-data
