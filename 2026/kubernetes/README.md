@@ -15,7 +15,6 @@ kubectl get deployments | deploy
 kubectl get pods | po
 kubectl get pods -l <label> -o wide --selector=<selector> --watch
 kubectl get events
-kubectl logs <pod-name> --follow
 kubectl get secrets
 kubectl get secret <secret-name> -o jsonpath="{.data.<secret-name>}" | base64 -d
 kubectl get services | svc
@@ -26,11 +25,16 @@ kubectl get --raw /metrics
 kubectl get --raw /api/v1/nodes/<node-name>/proxy/metrics
 kubectl get namespaces | ns
 kubectl get statefulsets | sts
+kubectl get -k .
+kubectl get <object> <object-name> -o yaml
+
+kubectl logs <pod-name> --follow
 
 kubectl delete service <service-name>
 kubectl delete service -l <label>
 kubectl delete deployment <deployment-name>
 kubectl delete statefulset <statefulset-name> --cascade=orphan
+kubectl delete -k .
 
 kubectl proxy
 
@@ -43,6 +47,7 @@ kubectl scale <deployment-name> --replicas=<replicas-number>
 kubectl scale <statefulset-name> --replicas=<replicas-number>
 
 kubectl describe <object>
+kubectl describe -k .
 
 kubectl set image <object> <container-name>=<image-url>
 
@@ -50,10 +55,12 @@ kubectl rollout restart <deployment-name>
 kubectl rollout status <deployment-name> --watch=true
 kubectl rollout undo <deployment-name>
 
+kubectl create <object>
 kubectl create configmap <configmap-name> --from-literal=<key>=<value>
+kubectl create <object> <object-name> --dry-run=client --output=yaml
 
 kubectl apply -f <file-path>
-kubectl apply -k <file-path>
+kubectl apply -k <directory-path>
 
 kubectl edit <object>
 
@@ -68,8 +75,13 @@ kubectl port-forward services/<service-name> <external-port>:<service-port>
 
 kubectl run <name> -it --image=<image-name> --rm -- bash
 
+kubectl patch <object> <instance-name> --patch-file <file>
 kubectl patch sts web -p '{"spec":{"replicas":3}}'
 kubectl patch sts web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":3}}}}'
 
 kubectl kustomize
+
+kubectl diff -k .
+
+kubectl config view
 
