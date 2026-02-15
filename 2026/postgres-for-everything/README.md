@@ -138,7 +138,13 @@ SELECT product_details['name'] AS "Name", product_details -> 'color' AS "Color" 
 
 ## Vector Embedding
 
-https://github.com/pgvector/pgvector
+Vector embedding helps find results that are similar to the value being searched.
+The `pgvector` extension provides the functionality to do vector embedding.
+
+Note: pgvector provides different single-precision (VECTOR), half-precision (HALFVEC), binary (BIT), and sparse (SPARSEVEC) vectors.
+Single-precision, half-precision, and sparse store continuous range, while binary only stores a 1 or 0. Sparse only stores values that are not 0.
+
+### Setup
 
 ```sql
 CREATE EXTENSION vector;
@@ -152,10 +158,18 @@ CREATE TABLE document_binary (
     embedding BIT(3),
     content TEXT NOT NULL
 );
+CREATE INDEX document_embedding_l2_idx ON document USING hnsw (embedding vector_l2_ops);
+CREATE INDEX document_embedding_cosine_idx ON document USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX document_embedding_ip_idx ON document USING hnsw (embedding vector_ip_ops);
+CREATE INDEX document_embedding_l1_idx ON document USING hnsw (embedding vector_l1_ops);
+CREATE INDEX document_binary_embedding_hamming_idx ON document_binary USING hnsw (embedding bit_hamming_ops);
+CREATE INDEX document_binary_embedding_jaccard_idx ON document_binary USING hnsw (embedding bit_jaccard_ops);
 
 INSERT INTO document (embedding, content) VALUES ('[1,1,0]', 'Plane'), ('[0,1,1]', 'Car'), ('[0,1,0]', 'Boat'), ('[0,0,1]', 'Submarine');
 INSERT INTO document_binary (embedding, content) VALUES ('110', 'Plane'), ('011', 'Car'), ('010', 'Boat'), ('001', 'Submarine');
 ```
+
+### Query
 
 ```sql
 -- Comparison of metrics using vector [1,0,0]
