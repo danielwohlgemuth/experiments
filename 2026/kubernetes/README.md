@@ -56,7 +56,7 @@ kubectl rollout status <deployment-name> --watch=true
 kubectl rollout undo <deployment-name>
 
 kubectl create <object>
-kubectl create configmap <configmap-name> --from-literal=<key>=<value>
+kubectl create configmap <configmap-name> --from-literal=<key>=<value> --from-file=<file> --from-env-file=<file>
 kubectl create <object> <object-name> --dry-run=client --output=yaml
 
 kubectl apply -f <file-path>

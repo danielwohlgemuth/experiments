@@ -1,0 +1,12 @@
+configMapGenerator:
+- name: game-config-5
+  options:
+    labels:
+      game-config: config-5
+  files:
+  - game.properties
+  - game-special-key=game.properties
+  literals:
+  - special.how=very
+  - special.type=charm
+
