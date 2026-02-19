@@ -1,11 +1,12 @@
 
-
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+https://kubernetes.io/docs/reference/kubectl/generated/
 
 When in doubt, use kubectl describe to see how Kubernetes has interpreted the request.
 
 
 minikube start
-minikube start --memory 5120 --cpus 4
+minikube start --memory 5120 --cpus 4 --feature-gates=PodLogsQuerySplitStreams=true
 minikube dashboard
 minikube service <service-name>
 minikube addons list
@@ -29,6 +30,7 @@ kubectl get -k .
 kubectl get <object> <object-name> -o yaml
 
 kubectl logs <pod-name> --follow
+kubectl logs <pod-name> -c <container-name>
 
 kubectl delete service <service-name>
 kubectl delete service -l <label>
