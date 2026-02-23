@@ -250,9 +250,104 @@ LIMIT 5;
 (4 rows)
 ```
 
-## GIS
+## Geographic Information System (GIS)
 
-postgis
+A geographic information system can be used to find points of interes within an area or calculate the distance between two points.
+The `postgis` extension adds geographic informatino system functionality to PostgreSQL. 
+
+### Setup
+
+```sql
+CREATE EXTENSION postgis;
+
+CREATE TABLE city (
+    name TEXT NOT NULL,
+    location GEOMETRY NOT NULL
+);
+INSERT INTO city (name, location) VALUES
+('Los Angeles', 'SRID=4326;POINT(-118.2426 34.0549)'),
+('Chicago', 'SRID=4326;POINT(-87.6324 41.8832)'),
+('New York', 'SRID=4326;POINT(-74.0059 40.7127)');
+
+CREATE TABLE shape (
+    name TEXT NOT NULL,
+    form GEOMETRY NOT NULL
+);
+INSERT INTO shape (name, form) VALUES
+('small circle', ST_Buffer('POINT(0 3)', 1)),
+('large circle', ST_Buffer('POINT(6 6)', 3)),
+('square', 'POLYGON((0 0,0 2,2 2,2 0,0 0))'::geometry),
+('rectangle', 'POLYGON((1 2,1 4,6 4,6 2,1 2))'::geometry);
+```
+
+### Query
+
+```sql
+SELECT
+    city_a.name AS "city a",
+    city_b.name AS "city b",
+    ROUND(ST_DISTANCE(ST_Transform(city_a.location, 3857), ST_Transform(city_b.location, 3857)) * cosd(42.3521) / 1000) AS "distance (km)"
+FROM city AS city_a
+JOIN city AS city_b ON city_a.name < city_b.name;
+```
+```
+   city a    |   city b    | distance (km) 
+-------------+-------------+---------------
+ Los Angeles | New York    |          3704
+ Chicago     | Los Angeles |          2648
+ Chicago     | New York    |          1128
+(3 rows)
+```
+
+```sql
+-- Name and distance to Indianapolis in km for cities within 2000 km and and sorted by distance
+SELECT
+    name AS city,
+    ROUND(ST_DISTANCE(ST_Transform(city.location, 3857), ST_Transform('SRID=4326;POINT(-86.1580 39.7690)', 3857)) * cosd(42.3521) / 1000) AS "distance to Indianapolis (km)"
+FROM city
+WHERE ST_DWithin(ST_Transform(city.location, 3857), ST_Transform('SRID=4326;POINT(-86.1580 39.7690)', 3857), 2000 * 1000)
+ORDER BY ST_DISTANCE(ST_Transform(city.location, 3857), ST_Transform('SRID=4326;POINT(-86.1580 39.7690)', 3857)) * cosd(42.3521) / 1000;
+```
+```
+   city   | distance to Indianapolis (km) 
+----------+-------------------------------
+ Chicago  |                           260
+ New York |                          1005
+(2 rows)
+```
+
+Shapes setup
+
+![Shapes](/2026/postgres-for-everything/assets/shapes.drawio.png)
+
+[Shapes setup file](https://app.diagrams.net/?title=shapes#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdanielwohlgemuth%2Fexperiments%2Frefs%2Fheads%2Fmain%2F2026%2Fpostgres-for-everything%2Fassets%2Fshapes.drawio)
+
+```sql
+-- Shapes that intersect with the point x=1 and y=2
+SELECT name
+FROM shape
+WHERE ST_Intersects('POINT(1 2)'::geometry, form);
+```
+```
+   name    
+-----------
+ square
+ rectangle
+(2 rows)
+```
+
+```sql
+-- Total area of the circles
+SELECT SUM(ST_Area(form)) AS area
+FROM shape
+WHERE name LIKE '%circle';
+```
+```
+       area        
+-------------------
+ 31.21445152258051
+(1 row)
+```
 
 ## Queue
 
