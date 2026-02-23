@@ -8,6 +8,28 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  pgvector:
+    image: pgvector/pgvector:0.8.1-pg18-trixie
+    container_name: postgres-for-everything-pgvector
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgvector_data:/var/lib/postgresql
+
+  postgis:
+    image: imresamu/postgis:18-3.6.1-alpine3.22
+    container_name: postgres-for-everything-postgis
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgis_data:/var/lib/postgresql
+
 volumes:
   postgres_data:
     name: postgres-for-everything-data
+  pgvector_data:
+    name: postgres-for-everything-data-pgvector
+  postgis_data:
+    name: postgres-for-everything-data-postgis

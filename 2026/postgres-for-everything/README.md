@@ -9,7 +9,14 @@ Postges is a versatile database and in this project explored some of its feature
 
 ```bash
 ./start-postgres.sh
-./start-postgres-pgvector.sh
+```
+
+Connect to each database.
+
+```bash
+./connect-to-postgres.sh
+./connect-to-pgvector.sh
+./connect-to-postgis.sh
 ```
 
 ## Relational
@@ -259,5 +266,4 @@ https://github.com/timescale/timescaledb
 
 ```bash
 ./stop-postgres.sh
-./stop-postgres-pgvector.sh
 ```
