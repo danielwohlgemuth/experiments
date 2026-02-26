@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: prod-web
+spec:
+  gatewayClassName: example
+  listeners:
+  - protocol: HTTP
+    port: 80
+    name: prod-web-gw
+    allowedResources:
+      namespaces:
+        from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: foo-route
+  labels:
+    gateway: prod-web-gw
+spec:
+  hostnames:
+  - foo.example.com
+  rules:
+  - backendRefs:
+    - name: foo-v1
+      port: 8080
+      weight: 90
+  - backendRefs:
+    - name: foo-v2
+      port: 8080
+      weight: 10
+
