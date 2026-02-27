@@ -253,7 +253,7 @@ LIMIT 5;
 ## Geographic Information System (GIS)
 
 A geographic information system can be used to find points of interes within an area or calculate the distance between two points.
-The `postgis` extension adds geographic informatino system functionality to PostgreSQL. 
+The `postgis` extension adds geographic informatino system functionality to PostgreSQL.
 
 ### Setup
 
@@ -291,7 +291,7 @@ FROM city AS city_a
 JOIN city AS city_b ON city_a.name < city_b.name;
 ```
 ```
-   city a    |   city b    | distance (km) 
+   city a    |   city b    | distance (km)
 -------------+-------------+---------------
  Los Angeles | New York    |          3704
  Chicago     | Los Angeles |          2648
@@ -309,7 +309,7 @@ WHERE ST_DWithin(ST_Transform(city.location, 3857), ST_Transform('SRID=4326;POIN
 ORDER BY ST_DISTANCE(ST_Transform(city.location, 3857), ST_Transform('SRID=4326;POINT(-86.1580 39.7690)', 3857)) * cosd(42.3521) / 1000;
 ```
 ```
-   city   | distance to Indianapolis (km) 
+   city   | distance to Indianapolis (km)
 ----------+-------------------------------
  Chicago  |                           260
  New York |                          1005
@@ -329,7 +329,7 @@ FROM shape
 WHERE ST_Intersects('POINT(1 2)'::geometry, form);
 ```
 ```
-   name    
+   name
 -----------
  square
  rectangle
@@ -343,7 +343,7 @@ FROM shape
 WHERE name LIKE '%circle';
 ```
 ```
-       area        
+       area
 -------------------
  31.21445152258051
 (1 row)
@@ -351,7 +351,49 @@ WHERE name LIKE '%circle';
 
 ## Queue
 
-row lock for update
+A queue can be implemented using a limit of 1 and a row lock for update.
+
+### Setup
+
+```sql
+CREATE TABLE queue (
+    id SERIAL PRIMARY KEY,
+    message TEXT NOT NULL,
+    processed BOOLEAN DEFAULT FALSE
+);
+
+INSERT INTO queue (message) VALUES ('message 1'), ('message 2'), ('message 3');
+```
+
+### Query
+
+```sql
+BEGIN;
+SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
+```
+```
+ id |  message  | processed
+----+-----------+-----------
+  1 | message 1 | f
+(1 row)
+```
+```sql
+-- From a different session
+BEGIN;
+SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
+```
+```
+ id |  message  | processed
+----+-----------+-----------
+  2 | message 2 | f
+(1 row)
+```
+
+Cleanup both sessions:
+
+```sql
+ROLLBACK;
+```
 
 ## Timeseries
 
