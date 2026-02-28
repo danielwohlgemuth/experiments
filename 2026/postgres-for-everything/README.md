@@ -368,6 +368,7 @@ INSERT INTO queue (message) VALUES ('message 1'), ('message 2'), ('message 3');
 ### Query
 
 ```sql
+-- Lock the first unprocessed message
 BEGIN;
 SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
 ```
@@ -378,7 +379,7 @@ SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
 (1 row)
 ```
 ```sql
--- From a different session
+-- From a different session, lock the next unprocessed message
 BEGIN;
 SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
 ```
@@ -389,15 +390,125 @@ SELECT * FROM queue WHERE processed = FALSE LIMIT 1 FOR UPDATE SKIP LOCKED;
 (1 row)
 ```
 
-Cleanup both sessions:
-
-```sql
-ROLLBACK;
-```
+To cleanup both sessions, run `ROLLBACK;` or `COMMIT;` in each session.
 
 ## Timeseries
 
-https://github.com/timescale/timescaledb
+The callenge with timeseries is that they need to be optimized for queries for analytical purposes.
+
+The `timescaledb` extension provides support for high-performance timeseries data.
+
+### Setup
+
+```sql
+CREATE TABLE sensor (
+    time TIMESTAMPTZ NOT NULL,
+    sensor_id TEXT NOT NULL,
+    temperature DOUBLE PRECISION NOT NULL
+) WITH (
+    tsdb.hypertable,
+    tsdb.partition_column = 'time'
+);
+CREATE INDEX idx_sensor_sensor_id_time ON sensor (sensor_id, time DESC);
+
+INSERT INTO sensor (time, sensor_id, temperature)
+SELECT
+    time
+    'sensor-' || ((RANDOM() * 9)::int + 1),
+    RANDOM() * 40
+FROM generate_series(now() - interval '1 day', now(), interval '1 minute') as time;
+```
+
+### Query
+
+```sql
+-- Count and average temperature per sensor in the last 2 hours
+SELECT
+    sensor_id,
+    COUNT(*) AS count,
+    ROUND(AVG(temperature)::numeric, 2) AS avg_temperature
+FROM sensor
+WHERE time > NOW() - INTERVAL '2 hours'
+GROUP BY sensor_id
+ORDER BY sensor_id ASC;
+```
+```
+ sensor_id | count | avg_temperature
+-----------+-------+-----------------
+ sensor-1  |     9 |           13.31
+ sensor-10 |     5 |           32.19
+ sensor-2  |    11 |           19.67
+ sensor-3  |    15 |           22.15
+ sensor-4  |     7 |           11.67
+ sensor-5  |    17 |           19.89
+ sensor-6  |     9 |           27.18
+ sensor-7  |    11 |           16.98
+ sensor-8  |    18 |           21.37
+ sensor-9  |    10 |           18.25
+(10 rows)
+```
+
+```sql
+-- Average temperature per hour
+SELECT
+    TIME_BUCKET('1 hour', time) AS hour,
+    sensor_id,
+    ROUND(AVG(temperature)::numeric, 2) AS avg_temperature
+FROM sensor
+GROUP BY hour, sensor_id
+ORDER BY hour ASC, sensor_id ASC;
+LIMIT 20;
+```
+```
+          hour          | sensor_id | avg_temperature
+------------------------+-----------+-----------------
+ 2026-02-27 12:00:00+00 | sensor-2  |           24.97
+ 2026-02-27 12:00:00+00 | sensor-3  |           23.01
+ 2026-02-27 12:00:00+00 | sensor-4  |           25.21
+ 2026-02-27 12:00:00+00 | sensor-5  |           28.97
+ 2026-02-27 12:00:00+00 | sensor-6  |           17.22
+ 2026-02-27 12:00:00+00 | sensor-7  |           21.20
+ 2026-02-27 12:00:00+00 | sensor-8  |           27.51
+ 2026-02-27 12:00:00+00 | sensor-9  |           24.87
+ 2026-02-27 13:00:00+00 | sensor-1  |           16.43
+ 2026-02-27 13:00:00+00 | sensor-10 |           17.08
+ 2026-02-27 13:00:00+00 | sensor-2  |           28.01
+ 2026-02-27 13:00:00+00 | sensor-3  |           22.10
+ 2026-02-27 13:00:00+00 | sensor-4  |           17.70
+ 2026-02-27 13:00:00+00 | sensor-5  |           18.64
+ 2026-02-27 13:00:00+00 | sensor-6  |           27.34
+ 2026-02-27 13:00:00+00 | sensor-7  |           18.10
+ 2026-02-27 13:00:00+00 | sensor-8  |           17.63
+ 2026-02-27 13:00:00+00 | sensor-9  |           10.93
+ 2026-02-27 14:00:00+00 | sensor-1  |           30.58
+ 2026-02-27 14:00:00+00 | sensor-10 |           19.12
+(20 rows)
+```
+
+```sql
+-- Latest temperature per sensor
+SELECT
+    DISTINCT ON (sensor_id) sensor_id,
+    time,
+    ROUND(temperature::numeric, 2) AS temperature
+FROM sensor
+ORDER BY sensor_id, time DESC;
+```
+```
+ sensor_id |             time              | round
+-----------+-------------------------------+-------
+ sensor-1  | 2026-02-28 11:50:31.639856+00 |  0.49
+ sensor-10 | 2026-02-28 11:36:31.639856+00 | 33.17
+ sensor-2  | 2026-02-28 12:23:31.639856+00 | 23.72
+ sensor-3  | 2026-02-28 12:16:31.639856+00 | 23.00
+ sensor-4  | 2026-02-28 12:21:31.639856+00 | 17.31
+ sensor-5  | 2026-02-28 12:22:31.639856+00 | 25.33
+ sensor-6  | 2026-02-28 12:24:31.639856+00 | 31.78
+ sensor-7  | 2026-02-28 12:19:31.639856+00 | 27.51
+ sensor-8  | 2026-02-28 12:20:31.639856+00 | 10.05
+ sensor-9  | 2026-02-28 12:18:31.639856+00 |  0.12
+(10 rows)
+```
 
 ## Stop Postgres
 

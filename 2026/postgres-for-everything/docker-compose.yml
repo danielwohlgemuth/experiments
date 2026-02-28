@@ -26,6 +26,15 @@ services:
     volumes:
       - postgis_data:/var/lib/postgresql
 
+  timescale:
+    image: timescale/timescaledb:2.25.1-pg18
+    container_name: postgres-for-everything-timescale
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - timescale_data:/var/lib/postgresql
+
 volumes:
   postgres_data:
     name: postgres-for-everything-data
@@ -33,3 +42,5 @@ volumes:
     name: postgres-for-everything-data-pgvector
   postgis_data:
     name: postgres-for-everything-data-postgis
+  timescale_data:
+    name: postgres-for-everything-data-timescale
