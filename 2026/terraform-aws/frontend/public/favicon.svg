@@ -1,0 +1,44 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+
+  <circle
+    cx="100"
+    cy="100"
+    r="75"
+    stroke="black"
+    stroke-width="10"
+    stroke-linejoin="round"
+    fill="black"
+  />
+
+  <path
+    d="
+      M 50,100
+      L 75,56.7
+      L 125,56.7
+      L 150,100
+      L 125,143.3
+      L 75,143.3
+      Z
+    "
+    stroke="white"
+    stroke-width="10"
+    stroke-linejoin="round"
+    fill="white"
+  />
+
+  <path
+    d="
+      M 100,100
+      L 75,56.7
+      M 100,100
+      L 150,100
+      M 100,100
+      L 75,143.3
+    "
+    stroke="black"
+    stroke-width="10"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>

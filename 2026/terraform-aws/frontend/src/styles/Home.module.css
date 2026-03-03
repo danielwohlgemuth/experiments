@@ -38,6 +38,21 @@
   border-radius: 0.5rem;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .spin {
+    animation: spin 0.5s ease-in-out;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(240deg);
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   .logo {
     filter: invert();

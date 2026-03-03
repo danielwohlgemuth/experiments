@@ -17,11 +17,14 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const [word, setWord] = useState("To get started, click the Generate Word button");
+  const [isSpinning, setIsSpinning] = useState(false);
 
   const fetchWord = async () => {
+    setIsSpinning(true);
     const response = await fetch("https://mywhyaz7wn5467e6ypreusq3am0dwgoq.lambda-url.us-east-2.on.aws/");
     const body = await response.json();
     setWord(body['word']);
+    setTimeout(() => setIsSpinning(false), 500);
   };
 
   return (
@@ -36,6 +39,14 @@ export default function Home() {
         className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
       >
         <main className={styles.main}>
+          <Image
+            className={`${styles.logo} ${isSpinning ? styles.spin : ""}`}
+            src="/favicon.svg"
+            alt="Random Word logo"
+            width={100}
+            height={100}
+            priority
+          />
           <div className={styles.text}>
             {word}
           </div>

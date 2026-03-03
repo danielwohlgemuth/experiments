@@ -67,6 +67,7 @@ resource "aws_s3_bucket_website_configuration" "random_word_frontend" {
 }
 
 locals {
+  frontend_folder        = "frontend"
   frontend_output_folder = "frontend/out"
   mime_types = {
     ".html" = "text/html"
@@ -79,6 +80,10 @@ locals {
   }
 }
 
+data "external" "random_word_frontend" {
+  program = ["bash", "-c", "cd ${path.module}/${local.frontend_folder} && npm run build > /dev/null && echo {}"]
+}
+
 resource "aws_s3_object" "random_word_frontend" {
   for_each     = fileset(local.frontend_output_folder, "**/*")
   bucket       = aws_s3_bucket.random_word_frontend.id
@@ -86,6 +91,7 @@ resource "aws_s3_object" "random_word_frontend" {
   source       = "${local.frontend_output_folder}/${each.value}"
   source_hash  = filesha256("${local.frontend_output_folder}/${each.value}")
   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
+  depends_on   = [data.external.random_word_frontend]
 }
 
 data "aws_iam_policy_document" "random_word_frontend" {
