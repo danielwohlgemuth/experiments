@@ -24,10 +24,17 @@ tofu plan
 
 # Apply configuration
 tofu apply
+tofy apply -var "container_name=YetAnotherName"
 
 # Inspect state
 tofu show
 
 # Manage state
 tofu state list
+
+# Print output
+tofu output
+
+# Terminate resources
+tofu destroy
 ```
