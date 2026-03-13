@@ -40,7 +40,7 @@ func ValidateMinus(state State) Result {
   }
   
   var char = state.input[state.index]
-  if char == '-' {
+  if IsMinus(char) {
     return Result {
       validator: []func(State) Result { ValidateDigits1To9, ValidateZero },
     }
@@ -48,6 +48,64 @@ func ValidateMinus(state State) Result {
   
   return Result {
     error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateMinusN2(state State) Result {
+  //fmt.Printf("ValidateMinux index: %d\n", state.index)
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: - at index %d. Found: End of input.", state.index),
+    }
+  }
+  
+  var char = state.input[state.index]
+  if IsMinus(char) {
+    return Result {
+      validator: []func(State) Result { ValidateDigitsN3 },
+    }
+  }
+  
+  return Result {
+    error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateBigE(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: E at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsBigE(char) {
+    return Result {
+      validator: []func(State) Result { ValidatePlus, ValidateMinusN2, ValidateDigitsN3 },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: E at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateSmallE(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: e at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsSmallE(char) {
+    return Result {
+      validator: []func(State) Result { ValidatePlus, ValidateMinusN2, ValidateDigitsN3 },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: e at index %d. Found: %c.", state.index, char),
   }
 }
 
@@ -61,7 +119,7 @@ func ValidateZero(state State) Result {
   var char = state.input[state.index]
   if IsZero(char) {
     return Result {
-      validator: []func(State) Result { ValidateStop },
+      validator: []func(State) Result { ValidatePeriod, ValidateBigE, ValidateSmallE, ValidateStop },
     }
   }
 
@@ -80,7 +138,7 @@ func ValidateDigits1To9(state State) Result {
   var char = state.input[state.index]
   if IsDigit1To9(char) {
     return Result {
-      validator: []func(State) Result { ValidateDigits, ValidateStop },
+      validator: []func(State) Result { ValidateDigits, ValidatePeriod, ValidateBigE, ValidateSmallE, ValidateStop },
     }
   }
 
@@ -109,6 +167,84 @@ func ValidateDigits(state State) Result {
   }
 }
 
+func ValidateDigitsN2(state State) Result {
+  //fmt.Printf("ValidateDigits index: %d\n", state.index)
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: 0-9 at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsDigit(char) {
+    return Result {
+      validator: []func(State) Result { ValidateDigitsN2, ValidateBigE, ValidateSmallE, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char), 
+  }
+}
+
+func ValidateDigitsN3(state State) Result {
+  //fmt.Printf("ValidateDigits index: %d\n", state.index)
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: 0-9 at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsDigit(char) {
+    return Result {
+      validator: []func(State) Result { ValidateDigitsN3, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char), 
+  }
+}
+
+func ValidatePeriod(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: . at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsPeriod(char) {
+    return Result {
+      validator: []func(State) Result { ValidateDigitsN2 },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: . at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidatePlus(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: + at index %d. Found: End of input.", state.index),
+    }
+  }
+  
+  var char = state.input[state.index]
+  if IsPlus(char) {
+    return Result {
+      validator: []func(State) Result { ValidateDigitsN3 },
+    }
+  }
+  
+  return Result {
+    error: fmt.Sprintf("Expected: + at index %d. Found: %c.", state.index, char),
+  }
+}
+
 func ValidateStop(state State) Result {
   //fmt.Printf("ValidateEnd index: %d\n", state.index)
   if len(state.input) == state.index {
@@ -122,22 +258,36 @@ func ValidateStop(state State) Result {
   }
 }
 
+func IsMinus(char byte) bool {
+  return char == '-'
+}
+
 func IsDigit(char byte) bool {
-  if IsDigit1To9(char) || IsZero(char) {
-    return true
-  }
-  return false
+  return IsDigit1To9(char) || IsZero(char)
 }
 
 func IsDigit1To9(char byte) bool {
-  if char == '1' || char == '2' || char == '3' || char == '4' || char == '5' || char == '6' || char == '7' || char == '8' || char == '9' {
-    return true
-  }
-  return false
+  return char == '1' || char == '2' || char == '3' || char == '4' || char == '5' || char == '6' || char == '7' || char == '8' || char == '9'
 }
 
 func IsZero(char byte) bool {
   return char == '0'
+}
+
+func IsPeriod(char byte) bool {
+  return char == '.'
+}
+
+func IsBigE(char byte) bool {
+  return char == 'E'
+}
+
+func IsSmallE(char byte) bool {
+  return char == 'e'
+}
+
+func IsPlus(char byte) bool {
+  return char == '+'
 }
 
 func Validate(input string) bool {

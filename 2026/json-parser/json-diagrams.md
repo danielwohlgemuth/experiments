@@ -198,6 +198,7 @@ flowchart LR
     digits --> e
     digits --> stop
     period --> digits_2
+    digits_2 --> digits_2
     digits_2 --> E
     digits_2 --> e
     digits_2 --> stop
