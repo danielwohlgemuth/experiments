@@ -12,7 +12,11 @@ func main() {
 	}
 
 	input := os.Args[1]
-	if Validate(input) {
+	state := State{
+		input: input,
+		index: 0,
+	}
+	if Validate(state) {
 		fmt.Printf("%s is a valid JSON\n", input)
 	} else {
 		fmt.Printf("%s is not a valid JSON\n", input)
