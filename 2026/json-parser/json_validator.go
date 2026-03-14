@@ -38,14 +38,14 @@ func ValidateMinus(state State) Result {
       error: fmt.Sprintf("Expected: - at index %d. Found: End of input.", state.index),
     }
   }
-  
+
   var char = state.input[state.index]
   if IsMinus(char) {
     return Result {
       validator: []func(State) Result { ValidateDigits1To9, ValidateZero },
     }
   }
-  
+
   return Result {
     error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.index, char),
   }
@@ -58,14 +58,14 @@ func ValidateMinusN2(state State) Result {
       error: fmt.Sprintf("Expected: - at index %d. Found: End of input.", state.index),
     }
   }
-  
+
   var char = state.input[state.index]
   if IsMinus(char) {
     return Result {
       validator: []func(State) Result { ValidateDigitsN3 },
     }
   }
-  
+
   return Result {
     error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.index, char),
   }
@@ -163,7 +163,7 @@ func ValidateDigits(state State) Result {
   }
 
   return Result {
-    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char), 
+    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char),
   }
 }
 
@@ -183,7 +183,7 @@ func ValidateDigitsN2(state State) Result {
   }
 
   return Result {
-    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char), 
+    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char),
   }
 }
 
@@ -203,7 +203,7 @@ func ValidateDigitsN3(state State) Result {
   }
 
   return Result {
-    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char), 
+    error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.index, char),
   }
 }
 
@@ -232,16 +232,92 @@ func ValidatePlus(state State) Result {
       error: fmt.Sprintf("Expected: + at index %d. Found: End of input.", state.index),
     }
   }
-  
+
   var char = state.input[state.index]
   if IsPlus(char) {
     return Result {
       validator: []func(State) Result { ValidateDigitsN3 },
     }
   }
-  
+
   return Result {
     error: fmt.Sprintf("Expected: + at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateSpace(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: \" \" at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsSpace(char) {
+    return Result {
+      validator: []func(State) Result { ValidateSpace, ValidateLinefeed, ValidateCarriageReturn, ValidateHorizontalTab, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: \" \" at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateLinefeed(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: \\n at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsLinefeed(char) {
+    return Result {
+      validator: []func(State) Result { ValidateSpace, ValidateLinefeed, ValidateCarriageReturn, ValidateHorizontalTab, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: \\n at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateCarriageReturn(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: \\r at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsCarriageReturn(char) {
+    return Result {
+      validator: []func(State) Result { ValidateSpace, ValidateLinefeed, ValidateCarriageReturn, ValidateHorizontalTab, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: \\r at index %d. Found: %c.", state.index, char),
+  }
+}
+
+func ValidateHorizontalTab(state State) Result {
+  if len(state.input) <= state.index {
+    return Result {
+      error: fmt.Sprintf("Expected: \\t at index %d. Found: End of input.", state.index),
+    }
+  }
+
+  var char = state.input[state.index]
+  if IsHorizontalTab(char) {
+    return Result {
+      validator: []func(State) Result { ValidateSpace, ValidateLinefeed, ValidateCarriageReturn, ValidateHorizontalTab, ValidateStop },
+    }
+  }
+
+  return Result {
+    error: fmt.Sprintf("Expected: \\t at index %d. Found: %c.", state.index, char),
   }
 }
 
@@ -252,7 +328,7 @@ func ValidateStop(state State) Result {
       complete: true,
     }
   }
-  
+
   return Result {
     error: fmt.Sprintf("Expected: End of input. Found: More characters (%d).", len(state.input) - state.index),
   }
@@ -288,6 +364,34 @@ func IsSmallE(char byte) bool {
 
 func IsPlus(char byte) bool {
   return char == '+'
+}
+
+func IsSpace(char byte) bool {
+  return char == ' '
+}
+
+func IsBackslash(char byte) bool {
+  return char == '\\'
+}
+
+func IsLinefeed(char byte) bool {
+  return char == '\n'
+}
+
+func IsCarriageReturn(char byte) bool {
+  return char == '\r'
+}
+
+func IsHorizontalTab(char byte) bool {
+  return char == '\t'
+}
+
+func IsQuote(char byte) bool {
+  return char == '"'
+}
+
+func IsControlCharacter(char byte) bool {
+  return char >= 0 && char <= 32 || char == 127
 }
 
 func Validate(input string) bool {
