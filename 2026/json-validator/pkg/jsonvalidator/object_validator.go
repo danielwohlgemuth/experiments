@@ -9,7 +9,7 @@ func ObjectOpenBrace(state State) State {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			error: fmt.Sprintf("Expected: { at index %d. Found: End of input.", state.Index),
+			Error: fmt.Sprintf("Expected: { at index %d. Found: End of input.", state.Index),
 		}
 	}
 
@@ -18,14 +18,14 @@ func ObjectOpenBrace(state State) State {
 		return State{
 			Input:      state.Input,
 			Index:      state.Index + 1,
-			validators: []func(State) State{ObjectCloseBrace},
+			Validators: []func(State) State{ObjectCloseBrace},
 		}
 	}
 
 	return State{
 		Input: state.Input,
 		Index: state.Index,
-		error: fmt.Sprintf("Expected: { at index %d. Found: %c.", state.Index, char),
+		Error: fmt.Sprintf("Expected: { at index %d. Found: %c.", state.Index, char),
 	}
 }
 
@@ -34,7 +34,7 @@ func ObjectCloseBrace(state State) State {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			error: fmt.Sprintf("Expected: } at index %d. Found: End of input.", state.Index),
+			Error: fmt.Sprintf("Expected: } at index %d. Found: End of input.", state.Index),
 		}
 	}
 
@@ -43,14 +43,14 @@ func ObjectCloseBrace(state State) State {
 		return State{
 			Input:      state.Input,
 			Index:      state.Index + 1,
-			validators: []func(State) State{ObjectStop},
+			Validators: []func(State) State{ObjectStop},
 		}
 	}
 
 	return State{
 		Input: state.Input,
 		Index: state.Index,
-		error: fmt.Sprintf("Expected: } at index %d. Found: %c.", state.Index, char),
+		Error: fmt.Sprintf("Expected: } at index %d. Found: %c.", state.Index, char),
 	}
 }
 
@@ -58,6 +58,6 @@ func ObjectStop(state State) State {
 	return State{
 		Input:    state.Input,
 		Index:    state.Index,
-		complete: true,
+		Complete: true,
 	}
 }

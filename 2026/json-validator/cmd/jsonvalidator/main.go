@@ -16,10 +16,19 @@ func main() {
 	state := jsonvalidator.State{
 		Input: input,
 		Index: 0,
+		Validators: []func(jsonvalidator.State) jsonvalidator.State{
+			jsonvalidator.NumberStart,
+		},
 	}
-	if jsonvalidator.Validate(state) {
+	result := jsonvalidator.Validate(state)
+	if result.Error == "" && result.Complete {
 		fmt.Printf("%s is a valid JSON\n", input)
 	} else {
 		fmt.Printf("%s is not a valid JSON\n", input)
+		if result.Error != "" {
+			fmt.Printf("%s", state.Error)
+		} else if !result.Complete {
+			fmt.Printf("Validation incomplete\n")
+		}
 	}
 }

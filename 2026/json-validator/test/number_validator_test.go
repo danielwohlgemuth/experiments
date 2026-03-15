@@ -10,6 +10,7 @@ func TestValidateNumber(t *testing.T) {
 		input    string
 		expected bool
 	}{
+		{"1", true},
 		{"123456890", true},
 		{"-1234567890", true},
 		{"111", true},
@@ -37,10 +38,16 @@ func TestValidateNumber(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		state := jsonvalidator.State{Input: test.input, Index: 0}
+		state := jsonvalidator.State{
+			Input: test.input,
+			Index: 0,
+			Validators: []func(jsonvalidator.State) jsonvalidator.State{
+				jsonvalidator.NumberStart,
+			},
+		}
 		result := jsonvalidator.Validate(state)
-		if result != test.expected {
-			t.Errorf("Validate(%s) = %v; want %v", test.input, result, test.expected)
+		if (result.Complete && result.Error == "") != test.expected {
+			t.Errorf("Validate(%s) = Error: %s, Complete: %v; want %v", test.input, result.Error, result.Complete, test.expected)
 		}
 	}
 }
