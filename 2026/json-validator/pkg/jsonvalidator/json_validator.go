@@ -34,3 +34,7 @@ func Validate(state State) State {
 
 	return state
 }
+
+func IsValid(state State) bool {
+	return state.Error == "" && state.Complete && state.Index == len(state.Input)
+}

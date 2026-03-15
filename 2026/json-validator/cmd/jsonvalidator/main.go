@@ -21,12 +21,12 @@ func main() {
 		},
 	}
 	result := jsonvalidator.Validate(state)
-	if result.Error == "" && result.Complete {
+	if jsonvalidator.IsValid(result) {
 		fmt.Printf("%s is a valid JSON\n", input)
 	} else {
 		fmt.Printf("%s is not a valid JSON\n", input)
 		if result.Error != "" {
-			fmt.Printf("%s", state.Error)
+			fmt.Printf("%s", result.Error)
 		} else if !result.Complete {
 			fmt.Printf("Validation incomplete\n")
 		}

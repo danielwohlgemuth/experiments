@@ -46,8 +46,8 @@ func TestValidateNumber(t *testing.T) {
 			},
 		}
 		result := jsonvalidator.Validate(state)
-		if (result.Complete && result.Error == "") != test.expected {
-			t.Errorf("Validate(%s) = Error: %s, Complete: %v; want %v", test.input, result.Error, result.Complete, test.expected)
+		if jsonvalidator.IsValid(result) != test.expected {
+			t.Errorf("Validate(%s) = Error: %s, Complete: %v, Index: %d; want %v", test.input, result.Error, result.Complete, result.Index, test.expected)
 		}
 	}
 }
