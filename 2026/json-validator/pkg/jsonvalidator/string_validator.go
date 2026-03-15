@@ -11,8 +11,7 @@ func StringValidator(state State) State {
 		},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(state) {
-		fmt.Println("StringValidator", newState.Error)
+	if !IsPartValid(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
