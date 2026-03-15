@@ -1,4 +1,4 @@
-package main
+package jsonvalidator
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 type Validator func(state State) State
 
 type State struct {
-	input      string
-	index      int
+	Input      string
+	Index      int
 	error      string
 	complete   bool
 	validators []func(State) State
@@ -16,7 +16,7 @@ type State struct {
 
 func Validate(state State) bool {
 	state = NumberStart(state)
-	for state.error == "" && !state.complete && len(state.input) >= state.index {
+	for state.error == "" && !state.complete && len(state.Input) >= state.Index {
 		var errors string = ""
 		var foundGoodValidator = false
 		for _, validator := range state.validators {
@@ -26,8 +26,8 @@ func Validate(state State) bool {
 				continue
 			}
 			state = State{
-				input: state.input,
-				index: state.index,
+				Input: state.Input,
+				Index: state.Index,
 			}
 			state = validatorState
 			foundGoodValidator = true

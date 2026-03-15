@@ -1,4 +1,4 @@
-package main
+package jsonvalidator
 
 func IsMinus(char byte) bool {
 	return char == '-'
