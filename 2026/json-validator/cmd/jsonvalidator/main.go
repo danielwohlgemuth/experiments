@@ -17,7 +17,9 @@ func main() {
 		Input: input,
 		Index: 0,
 		Validators: []func(jsonvalidator.State) jsonvalidator.State{
-			jsonvalidator.NumberStart,
+			jsonvalidator.NumberValidator,
+			jsonvalidator.ObjectValidator,
+			jsonvalidator.StringValidator,
 		},
 	}
 	result := jsonvalidator.Validate(state)

@@ -36,5 +36,9 @@ func Validate(state State) State {
 }
 
 func IsValid(state State) bool {
-	return state.Error == "" && state.Complete && state.Index == len(state.Input)
+	return state.Error == "" && state.Index == len(state.Input)
+}
+
+func IsPartValid(state State) bool {
+	return state.Error == "" && state.Complete
 }

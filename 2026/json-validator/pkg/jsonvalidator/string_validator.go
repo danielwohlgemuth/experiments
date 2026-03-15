@@ -1,110 +1,90 @@
 package jsonvalidator
 
-import (
-	"fmt"
-)
+import "fmt"
 
-func WhitespaceSpace(state State) State {
+func StringValidator(state State) State {
+	newState := State{
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			StringStart,
+		},
+	}
+	newState = Validate(newState)
+	if !IsPartValid(state) {
+		fmt.Println("StringValidator", newState.Error)
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("String validation failed at index %d", state.Index),
+		}
+	}
+
+	newState.Complete = false
+	return newState
+}
+
+func StringStart(state State) State {
+	return State{
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			StringOpenQuote,
+		},
+	}
+}
+
+func StringOpenQuote(state State) State {
 	if len(state.Input) <= state.Index {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			Error: fmt.Sprintf("Expected: \" \" at index %d. Found: End of input.", state.Index),
+			Error: fmt.Sprintf("Expected: \" at index %d. Found: End of input.", state.Index),
 		}
 	}
-
 	var char = state.Input[state.Index]
-	if IsSpace(char) {
+	if !IsQuote(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: \" at index %d. Found: %c.", state.Index, char),
 		}
 	}
-
 	return State{
 		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \" \" at index %d. Found: %c.", state.Index, char),
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			StringCloseQuote,
+		},
 	}
 }
 
-func WhitespaceLinefeed(state State) State {
+func StringCloseQuote(state State) State {
 	if len(state.Input) <= state.Index {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			Error: fmt.Sprintf("Expected: \\n at index %d. Found: End of input.", state.Index),
+			Error: fmt.Sprintf("Expected: \" at index %d. Found: End of input.", state.Index),
 		}
 	}
-
 	var char = state.Input[state.Index]
-	if IsLinefeed(char) {
-		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-		}
-	}
-
-	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\n at index %d. Found: %c.", state.Index, char),
-	}
-}
-
-func WhitespaceCarriageReturn(state State) State {
-	if len(state.Input) <= state.Index {
+	if !IsQuote(char) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			Error: fmt.Sprintf("Expected: \\r at index %d. Found: End of input.", state.Index),
+			Error: fmt.Sprintf("Expected: \" at index %d. Found: %c.", state.Index, char),
 		}
 	}
-
-	var char = state.Input[state.Index]
-	if IsCarriageReturn(char) {
-		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-		}
-	}
-
 	return State{
 		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\r at index %d. Found: %c.", state.Index, char),
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			StringStop,
+		},
 	}
 }
 
-func WhitespaceHorizontalTab(state State) State {
-	if len(state.Input) <= state.Index {
-		return State{
-			Input: state.Input,
-			Index: state.Index + 1,
-			Error: fmt.Sprintf("Expected: \\t at index %d. Found: End of input.", state.Index),
-		}
-	}
-
-	var char = state.Input[state.Index]
-	if IsHorizontalTab(char) {
-		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-		}
-	}
-
-	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\t at index %d. Found: %c.", state.Index, char),
-	}
-}
-
-func WhitespaceStop(state State) State {
+func StringStop(state State) State {
 	return State{
 		Input:    state.Input,
 		Index:    state.Index,

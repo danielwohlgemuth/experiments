@@ -4,6 +4,25 @@ import (
 	"fmt"
 )
 
+func NumberValidator(state State) State {
+	newState := State{
+		Input:      state.Input,
+		Index:      state.Index,
+		Validators: []func(State) State{NumberStart},
+	}
+	newState = Validate(newState)
+	if !IsPartValid(newState) {
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Number validation failed at index %d", state.Index),
+		}
+	}
+
+	newState.Complete = false
+	return newState
+}
+
 func NumberStart(state State) State {
 	return State{
 		Input:      state.Input,
