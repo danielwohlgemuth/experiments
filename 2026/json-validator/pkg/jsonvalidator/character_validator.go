@@ -57,7 +57,7 @@ func IsQuote(char byte) bool {
 }
 
 func IsControlCharacter(char byte) bool {
-	return char >= 0 && char <= 32 || char == 127
+	return char <= 32 || char == 127
 }
 
 func IsOpenBrace(char byte) bool {

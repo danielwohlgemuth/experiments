@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"jsonvalidator"
+	"os"
 )
 
 func main() {
