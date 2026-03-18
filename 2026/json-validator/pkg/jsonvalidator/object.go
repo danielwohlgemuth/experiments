@@ -11,7 +11,7 @@ func ObjectValidator(state State) State {
 		Validators: []func(State) State{ObjectStart},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(newState) {
+	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -28,7 +28,7 @@ func ObjectStart(state State) State {
 }
 
 func ObjectOpenBrace(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -105,7 +105,7 @@ func ObjectString(state State) State {
 }
 
 func ObjectColon(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -143,7 +143,7 @@ func ObjectValue(state State) State {
 }
 
 func ObjectComma(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -168,7 +168,7 @@ func ObjectComma(state State) State {
 }
 
 func ObjectCloseBrace(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,

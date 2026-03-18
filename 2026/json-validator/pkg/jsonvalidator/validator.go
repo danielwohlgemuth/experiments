@@ -37,10 +37,14 @@ func Validate(state State) State {
 	return state
 }
 
-func IsValid(state State) bool {
+func IsNoErrorAndEndOfString(state State) bool {
 	return state.Error == "" && state.Index == len(state.Input)
 }
 
-func IsPartValid(state State) bool {
+func IsNoErrorAndComplete(state State) bool {
 	return state.Error == "" && state.Complete
+}
+
+func IsAfterEndOfString(state State) bool {
+	return state.Index >= len(state.Input)
 }

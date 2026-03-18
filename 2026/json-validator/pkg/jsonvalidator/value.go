@@ -11,7 +11,7 @@ func ValueValidator(state State) State {
 		Validators: []func(State) State{ValueStart},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(newState) {
+	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,

@@ -11,7 +11,7 @@ func StringValidator(state State) State {
 		},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(newState) {
+	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -28,7 +28,7 @@ func StringStart(state State) State {
 }
 
 func StringOpenQuote(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -53,7 +53,7 @@ func StringOpenQuote(state State) State {
 }
 
 func StringCloseQuote(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,

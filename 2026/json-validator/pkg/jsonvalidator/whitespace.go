@@ -13,7 +13,7 @@ func WhitespaceValidator(state State) State {
 		},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(newState) {
+	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -34,7 +34,7 @@ func WhitespaceStart(state State) State {
 }
 
 func WhitespaceSpace(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -59,7 +59,7 @@ func WhitespaceSpace(state State) State {
 }
 
 func WhitespaceLinefeed(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -84,7 +84,7 @@ func WhitespaceLinefeed(state State) State {
 }
 
 func WhitespaceCarriageReturn(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -109,7 +109,7 @@ func WhitespaceCarriageReturn(state State) State {
 }
 
 func WhitespaceHorizontalTab(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index + 1,

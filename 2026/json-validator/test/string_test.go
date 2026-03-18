@@ -26,7 +26,7 @@ func TestString(t *testing.T) {
 			},
 		}
 		result := jsonvalidator.Validate(state)
-		if jsonvalidator.IsValid(result) != test.expected {
+		if jsonvalidator.IsNoErrorAndEndOfString(result) != test.expected {
 			t.Errorf("Validate(%s) = Error: %s, Complete: %v, Index: %d; want %v", test.input, result.Error, result.Complete, result.Index, test.expected)
 		}
 	}

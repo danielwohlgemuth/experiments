@@ -11,7 +11,7 @@ func NumberValidator(state State) State {
 		Validators: []func(State) State{NumberStart},
 	}
 	newState = Validate(newState)
-	if !IsPartValid(newState) {
+	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -32,7 +32,7 @@ func NumberStart(state State) State {
 }
 
 func NumberMinus(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -57,7 +57,7 @@ func NumberMinus(state State) State {
 }
 
 func NumberMinusN2(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -82,7 +82,7 @@ func NumberMinusN2(state State) State {
 }
 
 func NumberBigE(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -107,7 +107,7 @@ func NumberBigE(state State) State {
 }
 
 func NumberSmallE(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -132,7 +132,7 @@ func NumberSmallE(state State) State {
 }
 
 func NumberZero(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -157,7 +157,7 @@ func NumberZero(state State) State {
 }
 
 func NumberDigits1To9(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -182,7 +182,7 @@ func NumberDigits1To9(state State) State {
 }
 
 func NumberDigits(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -207,7 +207,7 @@ func NumberDigits(state State) State {
 }
 
 func NumberDigitsN2(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -232,7 +232,7 @@ func NumberDigitsN2(state State) State {
 }
 
 func NumberDigitsN3(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -257,7 +257,7 @@ func NumberDigitsN3(state State) State {
 }
 
 func NumberPeriod(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -282,7 +282,7 @@ func NumberPeriod(state State) State {
 }
 
 func NumberPlus(state State) State {
-	if len(state.Input) <= state.Index {
+	if IsAfterEndOfString(state) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
