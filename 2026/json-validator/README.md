@@ -18,3 +18,13 @@ go build -o json-validator-cli cmd/jsonvalidator/main.go
 ```bash
 go test ./test
 ```
+
+Add print statements
+```bash
+sed -i "" -E 's/^(func ([A-Za-z0-9]+)\(state State\) State \{)/\1\n\tfmt.Println("\2", state.Index)/' pkg/jsonvalidator/*.go
+```
+
+Remove print statements
+```bash
+sed -i "" -E '/^\tfmt.Println\("[A-Za-z0-9]+", state.Index\)/d' pkg/jsonvalidator/*.go
+```
