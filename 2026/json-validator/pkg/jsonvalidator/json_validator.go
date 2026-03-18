@@ -26,6 +26,8 @@ func Validate(state State) State {
 		}
 		if !foundGoodValidator {
 			state = State{
+				Input: state.Input,
+				Index: state.Index,
 				Error: errors,
 			}
 			break

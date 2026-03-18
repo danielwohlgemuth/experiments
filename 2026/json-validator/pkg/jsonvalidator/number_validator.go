@@ -184,6 +184,8 @@ func NumberDigits1To9(state State) State {
 func NumberDigits(state State) State {
 	if len(state.Input) <= state.Index {
 		return State{
+			Input: state.Input,
+			Index: state.Index,
 			Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: End of input.", state.Index),
 		}
 	}

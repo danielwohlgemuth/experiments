@@ -67,3 +67,11 @@ func IsOpenBrace(char byte) bool {
 func IsCloseBrace(char byte) bool {
 	return char == '}'
 }
+
+func IsColon(char byte) bool {
+	return char == ':'
+}
+
+func IsComma(char byte) bool {
+	return char == ','
+}

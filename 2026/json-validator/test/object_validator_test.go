@@ -5,36 +5,22 @@ import (
 	"testing"
 )
 
-func TestNumber(t *testing.T) {
+func TestObject(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected bool
 	}{
-		{"1", true},
-		{"123456890", true},
-		{"-1234567890", true},
-		{"111", true},
-		{"1.1234567890", true},
-		{"1e1234567890", true},
-		{"1e+2", true},
-		{"1e-3", true},
-		{"1E1", true},
-		{"1E+4", true},
-		{"1E-5", true},
-		{"1.2e1", true},
-		{"1.2e+6", true},
-		{"1.2e-7", true},
-		{"1.2E1", true},
-		{"1.2E+8", true},
-		{"1.2E-9", true},
-		{"abc", false},
-		{"{}", false},
-		{"[]", false},
-		{" ", false},
-		{"1-2", false},
-		{"1 2", false},
-		{"1..2", false},
-		{"1eE2", false},
+		{"{}", true},
+		{"{ }", true},
+		// {"{\"\":1}", true},
+		// {"{\"\":true}", true},
+		// {"{\"\" : 1}", true},
+		// {"{\"\" : \"\"}", true},
+		// {"{\"abc\" : \"def\"}", true},
+		// {"1", false},
+		// {"\"abc\"", false},
+		// {"[]", false},
+		// {" ", false},
 	}
 
 	for _, test := range tests {
@@ -42,7 +28,7 @@ func TestNumber(t *testing.T) {
 			Input: test.input,
 			Index: 0,
 			Validators: []func(jsonvalidator.State) jsonvalidator.State{
-				jsonvalidator.NumberStart,
+				jsonvalidator.ObjectStart,
 			},
 		}
 		result := jsonvalidator.Validate(state)

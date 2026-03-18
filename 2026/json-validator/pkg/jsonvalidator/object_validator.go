@@ -41,7 +41,7 @@ func ObjectOpenBrace(state State) State {
 		return State{
 			Input:      state.Input,
 			Index:      state.Index + 1,
-			Validators: []func(State) State{ObjectWhitespace},
+			Validators: []func(State) State{ObjectWhitespace, ObjectWhitespaceN2},
 		}
 	}
 
@@ -65,6 +65,108 @@ func ObjectWhitespace(state State) State {
 	}
 }
 
+func ObjectWhitespaceN2(state State) State {
+	newState := WhitespaceValidator(state)
+	if newState.Error != "" {
+		return newState
+	}
+
+	return State{
+		Input:      newState.Input,
+		Index:      newState.Index,
+		Validators: []func(State) State{ObjectString},
+	}
+}
+
+func ObjectWhitespaceN3(state State) State {
+	newState := WhitespaceValidator(state)
+	if newState.Error != "" {
+		return newState
+	}
+
+	return State{
+		Input:      newState.Input,
+		Index:      newState.Index,
+		Validators: []func(State) State{ObjectColon},
+	}
+}
+
+func ObjectString(state State) State {
+	newState := StringValidator(state)
+	if newState.Error != "" {
+		return newState
+	}
+
+	return State{
+		Input:      newState.Input,
+		Index:      newState.Index,
+		Validators: []func(State) State{ObjectWhitespaceN3},
+	}
+}
+
+func ObjectColon(state State) State {
+	if len(state.Input) <= state.Index {
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: : at index %d. Found: End of input.", state.Index),
+		}
+	}
+
+	var char = state.Input[state.Index]
+	if !IsColon(char) {
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: : at index %d. Found: %c.", state.Index, char),
+		}
+	}
+
+	return State{
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{ObjectValue},
+	}
+}
+
+func ObjectValue(state State) State {
+	newState := ValueValidator(state)
+	if newState.Error != "" {
+		return newState
+	}
+
+	return State{
+		Input:      newState.Input,
+		Index:      newState.Index,
+		Validators: []func(State) State{ObjectComma, ObjectCloseBrace},
+	}
+}
+
+func ObjectComma(state State) State {
+	if len(state.Input) <= state.Index {
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: , at index %d. Found: End of input.", state.Index),
+		}
+	}
+
+	var char = state.Input[state.Index]
+	if !IsComma(char) {
+		return State{
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: , at index %d. Found: %c.", state.Index, char),
+		}
+	}
+
+	return State{
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{ObjectWhitespaceN2},
+	}
+}
+
 func ObjectCloseBrace(state State) State {
 	if len(state.Input) <= state.Index {
 		return State{
@@ -75,18 +177,18 @@ func ObjectCloseBrace(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsCloseBrace(char) {
+	if !IsCloseBrace(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{ObjectStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: } at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: } at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{ObjectStop},
 	}
 }
 
