@@ -24,13 +24,7 @@ func StringValidator(state State) State {
 }
 
 func StringStart(state State) State {
-	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Validators: []func(State) State{
-			StringOpenQuote,
-		},
-	}
+	return StringOpenQuote(state)
 }
 
 func StringOpenQuote(state State) State {
