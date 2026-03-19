@@ -37,18 +37,18 @@ func ObjectOpenBrace(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsOpenBrace(char) {
+	if !IsOpenBrace(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{ObjectWhitespace, ObjectWhitespaceN2},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: { at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: { at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{ObjectWhitespace, ObjectWhitespaceN2},
 	}
 }
 

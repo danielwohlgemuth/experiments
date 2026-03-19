@@ -43,18 +43,18 @@ func WhitespaceSpace(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsSpace(char) {
+	if !IsSpace(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: \" \" at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \" \" at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
 	}
 }
 
@@ -68,18 +68,18 @@ func WhitespaceLinefeed(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsLinefeed(char) {
+	if !IsLinefeed(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: \\n at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\n at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
 	}
 }
 
@@ -93,18 +93,18 @@ func WhitespaceCarriageReturn(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsCarriageReturn(char) {
+	if !IsCarriageReturn(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: \\r at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\r at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
 	}
 }
 
@@ -118,18 +118,18 @@ func WhitespaceHorizontalTab(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsHorizontalTab(char) {
+	if !IsHorizontalTab(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: \\t at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: \\t at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
 	}
 }
 

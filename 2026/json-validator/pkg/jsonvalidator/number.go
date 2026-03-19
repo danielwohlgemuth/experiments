@@ -41,18 +41,18 @@ func NumberMinus(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsMinus(char) {
+	if !IsMinus(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigits1To9, NumberZero},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigits1To9, NumberZero},
 	}
 }
 
@@ -66,18 +66,18 @@ func NumberMinusN2(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsMinus(char) {
+	if !IsMinus(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigitsN3},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: - at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigitsN3},
 	}
 }
 
@@ -91,18 +91,18 @@ func NumberBigE(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsBigE(char) {
+	if !IsBigE(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: E at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: E at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
 	}
 }
 
@@ -116,18 +116,18 @@ func NumberSmallE(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsSmallE(char) {
+	if !IsSmallE(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: e at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: e at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
 	}
 }
 
@@ -141,18 +141,18 @@ func NumberZero(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsZero(char) {
+	if !IsZero(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: 0 at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: 0 at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
 	}
 }
 
@@ -166,18 +166,18 @@ func NumberDigits1To9(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsDigit1To9(char) {
+	if !IsDigit1To9(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigits, NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: 1-9 at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: 1-9 at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigits, NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
 	}
 }
 
@@ -191,18 +191,18 @@ func NumberDigits(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsDigit(char) {
+	if !IsDigit(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigits, NumberStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigits, NumberStop},
 	}
 }
 
@@ -216,18 +216,18 @@ func NumberDigitsN2(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsDigit(char) {
+	if !IsDigit(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigitsN2, NumberBigE, NumberSmallE, NumberStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigitsN2, NumberBigE, NumberSmallE, NumberStop},
 	}
 }
 
@@ -241,18 +241,18 @@ func NumberDigitsN3(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsDigit(char) {
+	if !IsDigit(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigitsN3, NumberStop},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: 0-9 at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigitsN3, NumberStop},
 	}
 }
 
@@ -266,18 +266,18 @@ func NumberPeriod(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsPeriod(char) {
+	if !IsPeriod(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigitsN2},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: . at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: . at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigitsN2},
 	}
 }
 
@@ -291,18 +291,18 @@ func NumberPlus(state State) State {
 	}
 
 	var char = state.Input[state.Index]
-	if IsPlus(char) {
+	if !IsPlus(char) {
 		return State{
-			Input:      state.Input,
-			Index:      state.Index + 1,
-			Validators: []func(State) State{NumberDigitsN3},
+			Input: state.Input,
+			Index: state.Index,
+			Error: fmt.Sprintf("Expected: + at index %d. Found: %c.", state.Index, char),
 		}
 	}
 
 	return State{
-		Input: state.Input,
-		Index: state.Index,
-		Error: fmt.Sprintf("Expected: + at index %d. Found: %c.", state.Index, char),
+		Input:      state.Input,
+		Index:      state.Index + 1,
+		Validators: []func(State) State{NumberDigitsN3},
 	}
 }
 
