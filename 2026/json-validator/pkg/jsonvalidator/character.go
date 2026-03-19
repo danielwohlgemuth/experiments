@@ -75,3 +75,11 @@ func IsColon(char byte) bool {
 func IsComma(char byte) bool {
 	return char == ','
 }
+
+func IsOpenBracket(char byte) bool {
+	return char == '['
+}
+
+func IsCloseBracket(char byte) bool {
+	return char == ']'
+}
