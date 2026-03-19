@@ -5,13 +5,13 @@ import (
 )
 
 func WhitespaceValidator(state State) State {
-	newState := State{
+	newState := Validate(State{
 		Input: state.Input,
 		Index: state.Index,
 		Validators: []func(State) State{
 			WhitespaceStart,
 		},
-	}
+	})
 	newState = Validate(newState)
 	if !IsNoErrorAndComplete(newState) {
 		return State{
@@ -26,11 +26,11 @@ func WhitespaceValidator(state State) State {
 }
 
 func WhitespaceStart(state State) State {
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index,
 		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-	}
+	})
 }
 
 func WhitespaceSpace(state State) State {
@@ -51,11 +51,11 @@ func WhitespaceSpace(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-	}
+	})
 }
 
 func WhitespaceLinefeed(state State) State {
@@ -76,11 +76,11 @@ func WhitespaceLinefeed(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-	}
+	})
 }
 
 func WhitespaceCarriageReturn(state State) State {
@@ -101,11 +101,11 @@ func WhitespaceCarriageReturn(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-	}
+	})
 }
 
 func WhitespaceHorizontalTab(state State) State {
@@ -126,11 +126,11 @@ func WhitespaceHorizontalTab(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
-	}
+	})
 }
 
 func WhitespaceStop(state State) State {

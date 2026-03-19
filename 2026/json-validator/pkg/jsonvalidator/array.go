@@ -45,14 +45,14 @@ func ArrayOpenBracket(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input: state.Input,
 		Index: state.Index + 1,
 		Validators: []func(State) State{
 			ArrayWhitespace,
 			ArrayValue,
 		},
-	}
+	})
 }
 
 func ArrayWhitespace(state State) State {
@@ -61,11 +61,11 @@ func ArrayWhitespace(state State) State {
 		return newState
 	}
 
-	return State{
+	return Validate(State{
 		Input:      newState.Input,
 		Index:      newState.Index,
 		Validators: []func(State) State{ArrayCloseBracket},
-	}
+	})
 }
 
 func ArrayValue(state State) State {
@@ -74,11 +74,11 @@ func ArrayValue(state State) State {
 		return newState
 	}
 
-	return State{
+	return Validate(State{
 		Input:      newState.Input,
 		Index:      newState.Index,
 		Validators: []func(State) State{ArrayCloseBracket, ArrayComma},
-	}
+	})
 }
 
 func ArrayComma(state State) State {
@@ -99,13 +99,13 @@ func ArrayComma(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input: state.Input,
 		Index: state.Index + 1,
 		Validators: []func(State) State{
 			ArrayValue,
 		},
-	}
+	})
 }
 
 func ArrayCloseBracket(state State) State {
@@ -126,19 +126,19 @@ func ArrayCloseBracket(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input: state.Input,
 		Index: state.Index + 1,
 		Validators: []func(State) State{
 			ArrayStop,
 		},
-	}
+	})
 }
 
 func ArrayStop(state State) State {
-	return State{
+	return Validate(State{
 		Input:    state.Input,
 		Index:    state.Index,
 		Complete: true,
-	}
+	})
 }

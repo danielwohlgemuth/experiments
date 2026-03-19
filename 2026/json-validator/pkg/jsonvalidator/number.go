@@ -5,12 +5,11 @@ import (
 )
 
 func NumberValidator(state State) State {
-	newState := State{
+	newState := Validate(State{
 		Input:      state.Input,
 		Index:      state.Index,
 		Validators: []func(State) State{NumberStart},
-	}
-	newState = Validate(newState)
+	})
 	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
@@ -24,11 +23,11 @@ func NumberValidator(state State) State {
 }
 
 func NumberStart(state State) State {
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index,
 		Validators: []func(State) State{NumberMinus, NumberDigits1To9, NumberZero},
-	}
+	})
 }
 
 func NumberMinus(state State) State {
@@ -49,11 +48,11 @@ func NumberMinus(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigits1To9, NumberZero},
-	}
+	})
 }
 
 func NumberMinusN2(state State) State {
@@ -74,11 +73,11 @@ func NumberMinusN2(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigitsN3},
-	}
+	})
 }
 
 func NumberBigE(state State) State {
@@ -99,11 +98,11 @@ func NumberBigE(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
-	}
+	})
 }
 
 func NumberSmallE(state State) State {
@@ -124,11 +123,11 @@ func NumberSmallE(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberPlus, NumberMinusN2, NumberDigitsN3},
-	}
+	})
 }
 
 func NumberZero(state State) State {
@@ -149,11 +148,11 @@ func NumberZero(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
-	}
+	})
 }
 
 func NumberDigits1To9(state State) State {
@@ -174,11 +173,11 @@ func NumberDigits1To9(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigits, NumberPeriod, NumberBigE, NumberSmallE, NumberStop},
-	}
+	})
 }
 
 func NumberDigits(state State) State {
@@ -199,11 +198,11 @@ func NumberDigits(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigits, NumberStop},
-	}
+	})
 }
 
 func NumberDigitsN2(state State) State {
@@ -224,11 +223,11 @@ func NumberDigitsN2(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigitsN2, NumberBigE, NumberSmallE, NumberStop},
-	}
+	})
 }
 
 func NumberDigitsN3(state State) State {
@@ -249,11 +248,11 @@ func NumberDigitsN3(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigitsN3, NumberStop},
-	}
+	})
 }
 
 func NumberPeriod(state State) State {
@@ -274,11 +273,11 @@ func NumberPeriod(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigitsN2},
-	}
+	})
 }
 
 func NumberPlus(state State) State {
@@ -299,11 +298,11 @@ func NumberPlus(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      state.Input,
 		Index:      state.Index + 1,
 		Validators: []func(State) State{NumberDigitsN3},
-	}
+	})
 }
 
 func NumberStop(state State) State {

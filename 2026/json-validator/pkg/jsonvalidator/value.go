@@ -5,12 +5,11 @@ import (
 )
 
 func ValueValidator(state State) State {
-	newState := State{
+	newState := Validate(State{
 		Input:      state.Input,
 		Index:      state.Index,
 		Validators: []func(State) State{ValueStart},
-	}
-	newState = Validate(newState)
+	})
 	if !IsNoErrorAndComplete(newState) {
 		return State{
 			Input: state.Input,
@@ -33,18 +32,18 @@ func ValueWhitespace(state State) State {
 		return newState
 	}
 
-	return State{
+	return Validate(State{
 		Input:      newState.Input,
 		Index:      newState.Index,
 		Validators: []func(State) State{ValueValue},
-	}
+	})
 }
 
 func ValueValue(state State) State {
 	newState := State{
 		Input:      state.Input,
 		Index:      state.Index,
-		Validators: []func(State) State{NumberValidator, ObjectValidator, StringValidator},
+		Validators: []func(State) State{NumberValidator, ObjectValidator, ArrayValidator, StringValidator},
 	}
 	newState = Validate(newState)
 	if newState.Error != "" {
@@ -55,11 +54,11 @@ func ValueValue(state State) State {
 		}
 	}
 
-	return State{
+	return Validate(State{
 		Input:      newState.Input,
 		Index:      newState.Index,
 		Validators: []func(State) State{ValueWhitespaceN2},
-	}
+	})
 }
 
 func ValueWhitespaceN2(state State) State {
@@ -68,11 +67,11 @@ func ValueWhitespaceN2(state State) State {
 		return newState
 	}
 
-	return State{
+	return Validate(State{
 		Input:      newState.Input,
 		Index:      newState.Index,
 		Validators: []func(State) State{ValueStop},
-	}
+	})
 }
 
 func ValueStop(state State) State {

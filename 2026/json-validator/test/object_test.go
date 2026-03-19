@@ -12,15 +12,15 @@ func TestObject(t *testing.T) {
 	}{
 		{"{}", true},
 		{"{ }", true},
-		// {"{\"\":1}", true},
+		{"{\"\":1}", true},
 		// {"{\"\":true}", true},
-		// {"{\"\" : 1}", true},
-		// {"{\"\" : \"\"}", true},
+		{"{\"\" : 1}", true},
+		{"{\"\" : \"\"}", true},
 		// {"{\"abc\" : \"def\"}", true},
-		// {"1", false},
-		// {"\"abc\"", false},
-		// {"[]", false},
-		// {" ", false},
+		{"1", false},
+		{"\"abc\"", false},
+		{"[]", false},
+		{" ", false},
 	}
 
 	for _, test := range tests {
