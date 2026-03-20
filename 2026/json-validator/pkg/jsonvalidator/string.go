@@ -34,7 +34,7 @@ func StringOpenQuote(state State) State {
 			Error: fmt.Sprintf("Expected: \" at index %d. Found: End of input.", state.Index),
 		}
 	}
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsQuote(char) {
 		return State{
 			Input: state.Input,
@@ -59,7 +59,7 @@ func StringCloseQuote(state State) State {
 			Error: fmt.Sprintf("Expected: \" at index %d. Found: End of input.", state.Index),
 		}
 	}
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsQuote(char) {
 		return State{
 			Input: state.Input,

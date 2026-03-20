@@ -42,7 +42,7 @@ func WhitespaceSpace(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsSpace(char) {
 		return State{
 			Input: state.Input,
@@ -67,7 +67,7 @@ func WhitespaceLinefeed(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsLinefeed(char) {
 		return State{
 			Input: state.Input,
@@ -92,7 +92,7 @@ func WhitespaceCarriageReturn(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsCarriageReturn(char) {
 		return State{
 			Input: state.Input,
@@ -117,7 +117,7 @@ func WhitespaceHorizontalTab(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsHorizontalTab(char) {
 		return State{
 			Input: state.Input,

@@ -36,7 +36,7 @@ func ArrayOpenBracket(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsOpenBracket(char) {
 		return State{
 			Input: state.Input,
@@ -90,7 +90,7 @@ func ArrayComma(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsComma(char) {
 		return State{
 			Input: state.Input,
@@ -117,7 +117,7 @@ func ArrayCloseBracket(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsCloseBracket(char) {
 		return State{
 			Input: state.Input,

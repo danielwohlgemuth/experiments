@@ -39,7 +39,7 @@ func NumberMinus(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsMinus(char) {
 		return State{
 			Input: state.Input,
@@ -64,7 +64,7 @@ func NumberMinusN2(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsMinus(char) {
 		return State{
 			Input: state.Input,
@@ -89,7 +89,7 @@ func NumberBigE(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsBigE(char) {
 		return State{
 			Input: state.Input,
@@ -114,7 +114,7 @@ func NumberSmallE(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsSmallE(char) {
 		return State{
 			Input: state.Input,
@@ -139,7 +139,7 @@ func NumberZero(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsZero(char) {
 		return State{
 			Input: state.Input,
@@ -164,7 +164,7 @@ func NumberDigits1To9(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsDigit1To9(char) {
 		return State{
 			Input: state.Input,
@@ -189,7 +189,7 @@ func NumberDigits(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsDigit(char) {
 		return State{
 			Input: state.Input,
@@ -214,7 +214,7 @@ func NumberDigitsN2(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsDigit(char) {
 		return State{
 			Input: state.Input,
@@ -239,7 +239,7 @@ func NumberDigitsN3(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsDigit(char) {
 		return State{
 			Input: state.Input,
@@ -264,7 +264,7 @@ func NumberPeriod(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsPeriod(char) {
 		return State{
 			Input: state.Input,
@@ -289,7 +289,7 @@ func NumberPlus(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsPlus(char) {
 		return State{
 			Input: state.Input,

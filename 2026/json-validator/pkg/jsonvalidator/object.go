@@ -35,7 +35,7 @@ func ObjectOpenBrace(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsOpenBrace(char) {
 		return State{
 			Input: state.Input,
@@ -112,7 +112,7 @@ func ObjectColon(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsColon(char) {
 		return State{
 			Input: state.Input,
@@ -150,7 +150,7 @@ func ObjectComma(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsComma(char) {
 		return State{
 			Input: state.Input,
@@ -175,7 +175,7 @@ func ObjectCloseBrace(state State) State {
 		}
 	}
 
-	var char = state.Input[state.Index]
+	char := state.Input[state.Index]
 	if !IsCloseBrace(char) {
 		return State{
 			Input: state.Input,
