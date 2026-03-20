@@ -83,3 +83,32 @@ func IsOpenBracket(char byte) bool {
 func IsCloseBracket(char byte) bool {
 	return char == ']'
 }
+
+func IsAnyCodepoint(char byte) bool {
+	// Printable characters except " and \. Whitespace characters: space, line feed, horizontal tab, carriage return.
+	return char >= 32 && char <= 126 && char != '"' && char != '\\' || char == '\n' || char == '\t' || char == '\r'
+}
+
+func IsB(char byte) bool {
+	return char == 'b'
+}
+
+func IsF(char byte) bool {
+	return char == 'f'
+}
+
+func IsN(char byte) bool {
+	return char == 'n'
+}
+
+func IsR(char byte) bool {
+	return char == 'r'
+}
+
+func IsT(char byte) bool {
+	return char == 't'
+}
+
+func IsU(char byte) bool {
+	return char == 'u'
+}

@@ -11,6 +11,16 @@ func TestString(t *testing.T) {
 		expected bool
 	}{
 		{"\"\"", true},
+		{"\"a\"", true},
+		{"\"abcdefghijklmnopqrstuvwxyz\"", true},
+		{"\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"", true},
+		{"\"0123456789\"", true},
+		{"\",./<>?;':[]{}|-=_+`~!@#$%^&*()	\"", true},
+		{"\"a1! \"", true},
+		{"\"\"\"", false},
+		{"\"\\\"", false},
+		{"\"\\r\b\f\n\r\t\"", false},
+		{"\"\\u1234\"", false},
 		{"{}", false},
 		{"1", false},
 		{"[]", false},
