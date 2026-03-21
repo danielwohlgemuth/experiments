@@ -6,9 +6,11 @@ import (
 
 func ObjectValidator(state State) State {
 	newState := Validate(State{
-		Input:      state.Input,
-		Index:      state.Index,
-		Validators: []func(State) State{ObjectStart},
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			ObjectStart,
+		},
 	})
 	if !IsNoErrorAndComplete(newState) {
 		return State{
@@ -45,9 +47,12 @@ func ObjectOpenBrace(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{ObjectWhitespace, ObjectWhitespaceN2},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			ObjectWhitespace,
+			ObjectWhitespaceN2,
+		},
 	})
 }
 
@@ -58,9 +63,11 @@ func ObjectWhitespace(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ObjectCloseBrace},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ObjectCloseBrace,
+		},
 	})
 }
 
@@ -71,9 +78,11 @@ func ObjectWhitespaceN2(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ObjectString},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ObjectString,
+		},
 	})
 }
 
@@ -84,9 +93,11 @@ func ObjectWhitespaceN3(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ObjectColon},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ObjectColon,
+		},
 	})
 }
 
@@ -97,9 +108,11 @@ func ObjectString(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ObjectWhitespaceN3},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ObjectWhitespaceN3,
+		},
 	})
 }
 
@@ -122,9 +135,11 @@ func ObjectColon(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{ObjectValue},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			ObjectValue,
+		},
 	})
 }
 
@@ -135,9 +150,12 @@ func ObjectValue(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ObjectComma, ObjectCloseBrace},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ObjectComma,
+			ObjectCloseBrace,
+		},
 	})
 }
 
@@ -160,9 +178,11 @@ func ObjectComma(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{ObjectWhitespaceN2},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			ObjectWhitespaceN2,
+		},
 	})
 }
 
@@ -185,9 +205,11 @@ func ObjectCloseBrace(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{ObjectStop},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			ObjectStop,
+		},
 	})
 }
 

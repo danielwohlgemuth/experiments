@@ -27,9 +27,15 @@ func WhitespaceValidator(state State) State {
 
 func WhitespaceStart(state State) State {
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index,
-		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			WhitespaceSpace,
+			WhitespaceLinefeed,
+			WhitespaceCarriageReturn,
+			WhitespaceHorizontalTab,
+			WhitespaceStop,
+		},
 	})
 }
 
@@ -52,9 +58,15 @@ func WhitespaceSpace(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			WhitespaceSpace,
+			WhitespaceLinefeed,
+			WhitespaceCarriageReturn,
+			WhitespaceHorizontalTab,
+			WhitespaceStop,
+		},
 	})
 }
 
@@ -77,9 +89,15 @@ func WhitespaceLinefeed(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			WhitespaceSpace,
+			WhitespaceLinefeed,
+			WhitespaceCarriageReturn,
+			WhitespaceHorizontalTab,
+			WhitespaceStop,
+		},
 	})
 }
 
@@ -102,9 +120,15 @@ func WhitespaceCarriageReturn(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			WhitespaceSpace,
+			WhitespaceLinefeed,
+			WhitespaceCarriageReturn,
+			WhitespaceHorizontalTab,
+			WhitespaceStop,
+		},
 	})
 }
 
@@ -127,9 +151,15 @@ func WhitespaceHorizontalTab(state State) State {
 	}
 
 	return Validate(State{
-		Input:      state.Input,
-		Index:      state.Index + 1,
-		Validators: []func(State) State{WhitespaceSpace, WhitespaceLinefeed, WhitespaceCarriageReturn, WhitespaceHorizontalTab, WhitespaceStop},
+		Input: state.Input,
+		Index: state.Index + 1,
+		Validators: []func(State) State{
+			WhitespaceSpace,
+			WhitespaceLinefeed,
+			WhitespaceCarriageReturn,
+			WhitespaceHorizontalTab,
+			WhitespaceStop,
+		},
 	})
 }
 

@@ -6,9 +6,11 @@ import (
 
 func ValueValidator(state State) State {
 	newState := Validate(State{
-		Input:      state.Input,
-		Index:      state.Index,
-		Validators: []func(State) State{ValueStart},
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			ValueStart,
+		},
 	})
 	if !IsNoErrorAndComplete(newState) {
 		return State{
@@ -33,9 +35,11 @@ func ValueWhitespace(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ValueValue},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ValueValue,
+		},
 	})
 }
 
@@ -62,9 +66,11 @@ func ValueValue(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ValueWhitespaceN2},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ValueWhitespaceN2,
+		},
 	})
 }
 
@@ -75,9 +81,11 @@ func ValueWhitespaceN2(state State) State {
 	}
 
 	return Validate(State{
-		Input:      newState.Input,
-		Index:      newState.Index,
-		Validators: []func(State) State{ValueStop},
+		Input: newState.Input,
+		Index: newState.Index,
+		Validators: []func(State) State{
+			ValueStop,
+		},
 	})
 }
 
