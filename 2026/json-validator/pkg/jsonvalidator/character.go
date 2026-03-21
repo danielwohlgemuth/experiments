@@ -116,3 +116,15 @@ func IsU(char byte) bool {
 func IsL(char byte) bool {
 	return char == 'l'
 }
+
+func IsE(char byte) bool {
+	return char == 'e'
+}
+
+func IsA(char byte) bool {
+	return char == 'a'
+}
+
+func IsS(char byte) bool {
+	return char == 's'
+}

@@ -13,7 +13,7 @@ func TestValue(t *testing.T) {
 		{" { } ", true},
 		{"{ }", true},
 		{"{\"\":1}", true},
-		{"{\"null\":null}", true},
+		{"{\"true\": true, \"false\": false, \"null\": null}", true},
 		{"{\"\" : 1}", true},
 		{"{\"\" : \"\"}", true},
 		{"{\"abc\" : \"def\"}", true},

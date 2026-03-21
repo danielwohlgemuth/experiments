@@ -41,9 +41,16 @@ func ValueWhitespace(state State) State {
 
 func ValueValue(state State) State {
 	newState := State{
-		Input:      state.Input,
-		Index:      state.Index,
-		Validators: []func(State) State{NumberValidator, ObjectValidator, ArrayValidator, StringValidator, NullValidator},
+		Input: state.Input,
+		Index: state.Index,
+		Validators: []func(State) State{
+			NumberValidator,
+			ObjectValidator,
+			ArrayValidator,
+			StringValidator,
+			NullValidator,
+			BoolValidator,
+		},
 	}
 	newState = Validate(newState)
 	if newState.Error != "" {
