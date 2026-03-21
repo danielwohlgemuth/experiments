@@ -35,5 +35,6 @@ func main() {
 		} else if !result.Complete {
 			fmt.Printf("Validation incomplete\n")
 		}
+		os.Exit(1)
 	}
 }
