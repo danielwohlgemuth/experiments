@@ -5,13 +5,19 @@ import (
 	"testing"
 )
 
-func TestArray(t *testing.T) {
+func TestNull(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected bool
 	}{
-		{"[]", true},
-		{"[ ]", true},
+		{"null", true},
+		{"Null", false},
+		{" ", false},
+		{"[]", false},
+		{"{}", false},
+		{"1", false},
+		{"true", false},
+		{"false", false},
 	}
 
 	for _, test := range tests {
@@ -19,7 +25,7 @@ func TestArray(t *testing.T) {
 			Input: test.input,
 			Index: 0,
 			Validators: []func(jsonvalidator.State) jsonvalidator.State{
-				jsonvalidator.ArrayStart,
+				jsonvalidator.NullStart,
 			},
 		}
 		result := jsonvalidator.Validate(state)
