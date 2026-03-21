@@ -1,7 +1,5 @@
 package jsonvalidator
 
-type Validator func(state State) State
-
 type State struct {
 	Input      string
 	Index      int
