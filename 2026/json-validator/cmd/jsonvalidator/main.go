@@ -20,13 +20,16 @@ func main() {
 			jsonvalidator.NumberValidator,
 			jsonvalidator.ObjectValidator,
 			jsonvalidator.StringValidator,
+			jsonvalidator.BoolValidator,
+			jsonvalidator.NullValidator,
+			jsonvalidator.ArrayValidator,
 		},
 	}
 	result := jsonvalidator.Validate(state)
 	if jsonvalidator.IsNoErrorAndEndOfString(result) {
-		fmt.Printf("%s is a valid JSON\n", input)
+		fmt.Printf("%s is valid JSON\n", input)
 	} else {
-		fmt.Printf("%s is not a valid JSON\n", input)
+		fmt.Printf("%s is NOT valid JSON\n", input)
 		if result.Error != "" {
 			fmt.Printf("%s", result.Error)
 		} else if !result.Complete {
