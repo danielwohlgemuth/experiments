@@ -16,7 +16,7 @@ func TestObject(t *testing.T) {
 		// {"{\"\":true}", true},
 		{"{\"\" : 1}", true},
 		{"{\"\" : \"\"}", true},
-		// {"{\"abc\" : \"def\"}", true},
+		{"{\"abc\" : \"def\"}", true},
 		{"1", false},
 		{"\"abc\"", false},
 		{"[]", false},

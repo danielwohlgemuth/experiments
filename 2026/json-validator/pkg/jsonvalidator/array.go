@@ -6,8 +6,8 @@ import (
 
 func ArrayValidator(state State) State {
 	newState := State{
-		Input:     state.Input,
-		Index:     state.Index,
+		Input:      state.Input,
+		Index:      state.Index,
 		Validators: []func(State) State{ArrayStart},
 	}
 	newState = Validate(newState)

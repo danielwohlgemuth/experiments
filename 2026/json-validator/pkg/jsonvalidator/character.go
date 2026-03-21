@@ -112,3 +112,7 @@ func IsT(char byte) bool {
 func IsU(char byte) bool {
 	return char == 'u'
 }
+
+func IsL(char byte) bool {
+	return char == 'l'
+}

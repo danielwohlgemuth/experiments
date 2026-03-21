@@ -72,7 +72,7 @@ func StringAnyCodepoint(state State) State {
 	return State{
 		Input: state.Input,
 		Index: state.Index + 1,
-		Validators: []func(State) State {
+		Validators: []func(State) State{
 			StringAnyCodepoint,
 			StringBackslash,
 			StringCloseQuote,

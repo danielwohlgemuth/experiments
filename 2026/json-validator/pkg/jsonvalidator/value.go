@@ -43,14 +43,14 @@ func ValueValue(state State) State {
 	newState := State{
 		Input:      state.Input,
 		Index:      state.Index,
-		Validators: []func(State) State{NumberValidator, ObjectValidator, ArrayValidator, StringValidator},
+		Validators: []func(State) State{NumberValidator, ObjectValidator, ArrayValidator, StringValidator, NullValidator},
 	}
 	newState = Validate(newState)
 	if newState.Error != "" {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
-			Error: fmt.Sprintf("Value2 validation failed at index %d", state.Index),
+			Error: fmt.Sprintf("Value validation failed at index %d", state.Index),
 		}
 	}
 
