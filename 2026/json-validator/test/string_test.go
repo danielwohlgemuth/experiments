@@ -21,6 +21,7 @@ func TestString(t *testing.T) {
 		{"\"\\\"", false},
 		{"\"\\r\b\f\n\r\t\"", false},
 		{"\"\\u1234\"", false},
+		{"\"\\u12aF\"", false},
 		{"{}", false},
 		{"1", false},
 		{"[]", false},

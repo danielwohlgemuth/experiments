@@ -279,7 +279,7 @@ func String4HexDigits(state State) State {
 		}
 	}
 	char := state.Input[state.Index]
-	if !IsDigit(char) {
+	if !IsHex(char) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -304,7 +304,7 @@ func String4HexDigitsN2(state State) State {
 		}
 	}
 	char := state.Input[state.Index]
-	if !IsDigit(char) {
+	if !IsHex(char) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -329,7 +329,7 @@ func String4HexDigitsN3(state State) State {
 		}
 	}
 	char := state.Input[state.Index]
-	if !IsDigit(char) {
+	if !IsHex(char) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,
@@ -354,7 +354,7 @@ func String4HexDigitsN4(state State) State {
 		}
 	}
 	char := state.Input[state.Index]
-	if !IsDigit(char) {
+	if !IsHex(char) {
 		return State{
 			Input: state.Input,
 			Index: state.Index,

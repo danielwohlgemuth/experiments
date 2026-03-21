@@ -128,3 +128,7 @@ func IsA(char byte) bool {
 func IsS(char byte) bool {
 	return char == 's'
 }
+
+func IsHex(char byte) bool {
+	return IsDigit(char) || char == 'A' || char == 'B' || char == 'C' || char == 'D' || char == 'E' || char == 'F' || char == 'a' || char == 'b' || char == 'c' || char == 'd' || char == 'e' || char == 'f'
+}
