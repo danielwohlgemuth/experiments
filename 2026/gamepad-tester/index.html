@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gamepad Tester</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #1a1d27;
+      --border: #2a2f3d;
+      --text: #e8eaef;
+      --muted: #8b92a5;
+      --accent: #5b8def;
+      --pressed: #3dd68c;
+      --stick-bg: #252936;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hint kbd {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.1em 0.4em;
+      font-size: 0.85em;
+    }
+
+    #empty {
+      padding: 2rem;
+      text-align: center;
+      background: var(--panel);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+    }
+
+    #pads {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .pad {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .pad-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .controller-layout {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 1.15fr) 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    @media (max-width: 820px) {
+      .controller-layout {
+        grid-template-columns: 1fr;
+        max-width: 22rem;
+        margin: 0 auto;
+      }
+    }
+
+    .controller-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .controller-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .shoulder-row {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 11rem;
+    }
+
+    .shoulder-row .btn {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .center-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 15rem;
+    }
+
+    .center-buttons .btn {
+      min-width: 0;
+    }
+
+    .dpad,
+    .face-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(3.5rem, 1fr));
+      grid-template-rows: repeat(3, auto);
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 20rem;
+    }
+
+    .dpad .btn-d-up { grid-column: 2; grid-row: 1; }
+    .dpad .btn-d-left { grid-column: 1; grid-row: 2; }
+    .dpad .btn-d-right { grid-column: 3; grid-row: 2; }
+    .dpad .btn-d-down { grid-column: 2; grid-row: 3; }
+
+    .face-buttons .btn-y { grid-column: 2; grid-row: 1; }
+    .face-buttons .btn-x { grid-column: 1; grid-row: 2; }
+    .face-buttons .btn-b { grid-column: 3; grid-row: 2; }
+    .face-buttons .btn-a { grid-column: 2; grid-row: 3; }
+
+    .button-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .controller-center .sticks {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 3rem;
+      padding: 0.35rem;
+      border-radius: 8px;
+      background: var(--stick-bg);
+      border: 2px solid var(--border);
+      position: relative;
+      transition: background 0.05s;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 10px;
+      padding: 2px;
+      background: conic-gradient(from 0deg, var(--pressed) 0%, var(--pressed) var(--progress-angle, 0deg), transparent var(--progress-angle, 0deg));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .btn.pressed {
+      background: color-mix(in srgb, var(--pressed) 18%, var(--stick-bg));
+    }
+
+    .btn:not(.pressed) {
+      background: color-mix(in srgb, var(--pressed) var(--progress-opacity, 0%), var(--stick-bg));
+    }
+
+    .btn-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .sticks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .stick-wrap {
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stick-title.btn {
+      /* width: 140px; */
+      margin-bottom: 0.5rem;
+      pointer-events: none;
+    }
+
+    .stick-title .btn-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stick-area {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: var(--stick-bg);
+      border: 1px solid var(--border);
+    }
+
+    .stick-cross-h,
+    .stick-cross-v {
+      position: absolute;
+      background: var(--border);
+      pointer-events: none;
+    }
+
+    .stick-cross-h {
+      left: 10%;
+      right: 10%;
+      top: 50%;
+      height: 1px;
+      transform: translateY(-50%);
+    }
+
+    .stick-cross-v {
+      top: 10%;
+      bottom: 10%;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-50%);
+    }
+
+    .stick-dot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      margin: -11px 0 0 -11px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+      left: 50%;
+      top: 50%;
+      will-change: left, top;
+    }
+
+    .stick-readout {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .axes-list {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+    }
+
+    .axes-list div {
+      padding: 0.15rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gamepad Tester</h1>
+  <p class="hint">
+    Press any button on your controller after this page has focus.
+    <strong>Select + Start</strong> together refreshes the page.
+  </p>
+
+  <div id="empty">No gamepad detected — connect a controller and press a button.</div>
+  <div id="pads" hidden></div>
+
+  <script>
+    const STANDARD_LABELS = [
+      "A / Cross", "B / Circle", "X / Square", "Y / Triangle",
+      "L1 / LB", "R1 / RB", "L2 / LT", "R2 / RT",
+      "Select / Back", "Start", "L3", "R3",
+      "D-Up", "D-Down", "D-Left", "D-Right",
+    ];
+
+    const padsEl = document.getElementById("pads");
+    const emptyEl = document.getElementById("empty");
+
+    const BTN_SELECT = 8;
+    const BTN_START = 9;
+
+    /** @type {Map<number, HTMLElement>} */
+    const padRoots = new Map();
+    let refreshChordArmed = true;
+
+    function isButtonPressed(buttons, index) {
+      const b = buttons[index];
+      if (!b) return false;
+      return b.pressed || b.value > 0;
+    }
+
+    function checkSelectStartRefresh(gamepads) {
+      for (const gp of gamepads) {
+        if (!gp) continue;
+        if (
+          isButtonPressed(gp.buttons, BTN_SELECT) &&
+          isButtonPressed(gp.buttons, BTN_START)
+        ) {
+          if (refreshChordArmed) {
+            refreshChordArmed = false;
+            location.reload();
+          }
+          return;
+        }
+      }
+      refreshChordArmed = true;
+    }
+
+    function labelForButton(index) {
+      return STANDARD_LABELS[index] ?? `Button ${index}`;
+    }
+
+    function formatAxis(v) {
+      return v.toFixed(3);
+    }
+
+    function addButton(parent, index, extraClass = "") {
+      const cell = createButtonCell(index);
+      if (extraClass) cell.classList.add(extraClass);
+      parent.appendChild(cell);
+      return cell;
+    }
+
+    function buildPadShell(gamepad) {
+      const root = document.createElement("article");
+      root.className = "pad";
+      root.dataset.index = String(gamepad.index);
+
+      const header = document.createElement("div");
+      header.innerHTML = `
+        <h2></h2>
+        <span class="pad-meta"></span>
+      `;
+      root.appendChild(header);
+
+      const buttonsSection = document.createElement("section");
+      buttonsSection.className = "buttons-section";
+
+      const controllerLayout = document.createElement("div");
+      controllerLayout.className = "controller-layout";
+
+      const left = document.createElement("div");
+      left.className = "controller-side controller-left";
+
+      const leftShoulder = document.createElement("div");
+      leftShoulder.className = "shoulder-row";
+      addButton(leftShoulder, 6);
+      addButton(leftShoulder, 4);
+      left.appendChild(leftShoulder);
+
+      const dpadGroup = document.createElement("div");
+      dpadGroup.className = "button-group";
+      const dpadGrid = document.createElement("div");
+      dpadGrid.className = "dpad";
+      addButton(dpadGrid, 12, "btn-d-up");
+      addButton(dpadGrid, 14, "btn-d-left");
+      addButton(dpadGrid, 15, "btn-d-right");
+      addButton(dpadGrid, 13, "btn-d-down");
+      dpadGroup.appendChild(dpadGrid);
+      left.appendChild(dpadGroup);
+
+      const center = document.createElement("div");
+      center.className = "controller-center";
+
+      const centerButtons = document.createElement("div");
+      centerButtons.className = "center-buttons";
+      addButton(centerButtons, 8);
+      addButton(centerButtons, 9);
+      addButton(centerButtons, 10);
+      addButton(centerButtons, 11);
+      center.appendChild(centerButtons);
+
+      const sticksWrap = document.createElement("div");
+      sticksWrap.className = "sticks";
+      center.appendChild(sticksWrap);
+
+      const axesList = document.createElement("div");
+      axesList.className = "axes-list";
+      center.appendChild(axesList);
+
+      const right = document.createElement("div");
+      right.className = "controller-side controller-right";
+
+      const rightShoulder = document.createElement("div");
+      rightShoulder.className = "shoulder-row";
+      addButton(rightShoulder, 5);
+      addButton(rightShoulder, 7);
+      right.appendChild(rightShoulder);
+
+      const faceGroup = document.createElement("div");
+      faceGroup.className = "button-group";
+      const faceGrid = document.createElement("div");
+      faceGrid.className = "face-buttons";
+      addButton(faceGrid, 3, "btn-y");
+      addButton(faceGrid, 2, "btn-x");
+      addButton(faceGrid, 1, "btn-b");
+      addButton(faceGrid, 0, "btn-a");
+      faceGroup.appendChild(faceGrid);
+      right.appendChild(faceGroup);
+
+      controllerLayout.append(left, center, right);
+      buttonsSection.appendChild(controllerLayout);
+
+      root.appendChild(buttonsSection);
+
+      return { root, header, buttonsSection, sticksWrap, axesList };
+    }
+
+    function createButtonCell(index) {
+      const cell = document.createElement("div");
+      cell.className = "btn";
+      cell.dataset.btnIndex = String(index);
+      cell.innerHTML = `
+        <span class="btn-label"></span>
+      `;
+      cell.querySelector(".btn-label").textContent = labelForButton(index);
+      return cell;
+    }
+
+    function ensureStickUI(wrap, axisPairIndex, title) {
+      let el = wrap.querySelector(`[data-stick="${axisPairIndex}"]`);
+      if (el) return el;
+
+      el = document.createElement("div");
+      el.className = "stick-wrap";
+      el.dataset.stick = String(axisPairIndex);
+      el.innerHTML = `
+        <div class="stick-area">
+          <div class="stick-cross-h"></div>
+          <div class="stick-cross-v"></div>
+          <div class="stick-dot"></div>
+        </div>
+        <div class="stick-readout"></div>
+      `;
+      wrap.appendChild(el);
+      return el;
+    }
+
+    function syncButtons(buttonsSection, buttons) {
+      buttonsSection.querySelectorAll(".btn[data-btn-index]").forEach((cell) => {
+        const i = Number(cell.dataset.btnIndex);
+        if (Number.isNaN(i)) return;
+        if (i >= buttons.length) {
+          cell.hidden = true;
+          return;
+        }
+        cell.hidden = false;
+        const btn = buttons[i];
+        const pressed = btn.pressed || btn.value > 0;
+        cell.classList.toggle("pressed", pressed);
+        
+        const progress = Math.min(Math.max(btn.value, 0), 1);
+        const angle = progress * 360;
+        cell.style.setProperty("--progress-angle", `${angle}deg`);
+        cell.style.setProperty("--progress-opacity", progress * 0.18);
+      });
+    }
+
+    function syncSticks(wrap, axes) {
+      const pairs = [
+        [0, 1, "Left stick"],
+        [2, 3, "Right stick"],
+      ];
+
+      for (const [xIdx, yIdx, title] of pairs) {
+        if (xIdx >= axes.length && yIdx >= axes.length) continue;
+        const ui = ensureStickUI(wrap, xIdx, title);
+        const x = axes[xIdx] ?? 0;
+        const y = axes[yIdx] ?? 0;
+        const area = ui.querySelector(".stick-area");
+        const dot = ui.querySelector(".stick-dot");
+        const readout = ui.querySelector(".stick-readout");
+        const size = area.offsetWidth || 140;
+        const half = size / 2;
+        const travel = half - dot.offsetWidth / 2;
+        dot.style.left = `${half + x * travel}px`;
+        dot.style.top = `${half + y * travel}px`;
+        readout.textContent = `X: ${formatAxis(x)}  Y: ${formatAxis(y)}`;
+      }
+
+      const extraAxes = [];
+      for (let i = 0; i < axes.length; i++) {
+        if (i <= 3) continue;
+        extraAxes.push(`Axis ${i}: ${formatAxis(axes[i])}`);
+      }
+      const list = wrap.parentElement.querySelector(".axes-list");
+      if (extraAxes.length) {
+        list.innerHTML = extraAxes.map((line) => `<div>${line}</div>`).join("");
+      } else if (axes.length <= 4) {
+        list.innerHTML = "";
+      }
+    }
+
+    function attachGamepad(gamepad) {
+      if (padRoots.has(gamepad.index)) return;
+      const shell = buildPadShell(gamepad);
+      padsEl.appendChild(shell.root);
+      padRoots.set(gamepad.index, shell.root);
+      updateUI();
+    }
+
+    function detachGamepad(index) {
+      const root = padRoots.get(index);
+      if (root) {
+        root.remove();
+        padRoots.delete(index);
+      }
+      updateUI();
+    }
+
+    function updateUI() {
+      const gamepads = navigator.getGamepads();
+      checkSelectStartRefresh(gamepads);
+      const active = [];
+
+      for (const gp of gamepads) {
+        if (!gp) continue;
+        active.push(gp.index);
+
+        if (!padRoots.has(gp.index)) attachGamepad(gp);
+
+        const root = padRoots.get(gp.index);
+        const header = root.querySelector(".pad-header");
+
+        const buttonsSection = root.querySelector(".buttons-section");
+        const sticksWrap = root.querySelector(".sticks");
+        syncButtons(buttonsSection, gp.buttons);
+        syncSticks(sticksWrap, gp.axes);
+      }
+
+      for (const index of [...padRoots.keys()]) {
+        if (!active.includes(index)) detachGamepad(index);
+      }
+
+      const hasAny = active.length > 0;
+      emptyEl.hidden = hasAny;
+      padsEl.hidden = !hasAny;
+    }
+
+    window.addEventListener("gamepadconnected", (e) => {
+      attachGamepad(e.gamepad);
+    });
+
+    window.addEventListener("gamepaddisconnected", (e) => {
+      detachGamepad(e.gamepad.index);
+    });
+
+    function loop() {
+      updateUI();
+      requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
